@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View } from "react-native";
+import { Image, SafeAreaView, View } from "react-native";
 import { Button, Card, IconButton, Text } from "react-native-paper";
 import Style from "../../styles/Style";
 
@@ -7,6 +7,12 @@ const UserType = (props) => {
   const [selected, setSelected] = useState(null);
   return (
     <SafeAreaView style={Style.container}>
+      <View>
+        <Image
+          source={require("../../../assets/img/logo.png")}
+          style={{ height: 100, width: 150 }}
+        />
+      </View>
       <View style={{}}>
         <Text style={Style.heading}>Select User Type</Text>
       </View>
@@ -44,6 +50,7 @@ const UserType = (props) => {
           style={{ height: 40, width: 200, borderRadius: 50 }}
           labelStyle={{ fontSize: 25 }}
           uppercase={false}
+          onPress={() => props.navigation.navigate("Login")}
         >
           Next
         </Button>

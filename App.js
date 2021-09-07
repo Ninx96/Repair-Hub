@@ -13,6 +13,8 @@ import * as Font from "expo-font";
 import { AuthContext } from "./src/components/ContextComponent";
 
 import AuthStackComponent from "./src/components/AuthStackComponent";
+import Dashboard from "./src/screens/Dashboard/Dashboard";
+import DrawerComponent from "./src/components/DrawerComponent";
 
 export default function App() {
   const [resourcesLoaded, setResourcesLoaded] = useState(false);
@@ -148,12 +150,7 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
-            {/* {loginState.userToken !== null ? (
-              <DrawerComponent userDetails={loginState} />
-            ) : (
-              <Login />
-            )} */}
-            <AuthStackComponent />
+            <DrawerComponent />
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>

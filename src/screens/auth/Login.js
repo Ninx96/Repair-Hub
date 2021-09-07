@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View } from "react-native";
+import { Image, SafeAreaView, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Style from "../../styles/Style";
 
-const Login = () => {
+const Login = (props) => {
   return (
     <SafeAreaView style={Style.container}>
-      <Text style={Style.heading}>RepirHub</Text>
+      <View>
+        <Image
+          source={require("../../../assets/img/logo.png")}
+          style={{ height: 100, width: 150 }}
+        />
+      </View>
 
       <View style={Style.form}>
         <View style={Style.formControl}>
@@ -32,6 +37,7 @@ const Login = () => {
           style={Style.button}
           uppercase={false}
           labelStyle={Style.buttonLabel}
+          onPress={() => props.navigation.navigate("Otp")}
         >
           Login
         </Button>

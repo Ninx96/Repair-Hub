@@ -6,6 +6,7 @@ const Style = StyleSheet.create({
     backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "space-evenly",
+    paddingTop: Platform.OS == "android" ? StatusBar.currentHeight : 0,
   },
   heading: {
     fontSize: 40,
@@ -28,6 +29,12 @@ const Style = StyleSheet.create({
   buttonLabel: {
     fontSize: 30,
     marginTop: 15,
+  },
+  textBig: {
+    fontSize: 30,
+  },
+  textRegular: {
+    fontSize: 25,
   },
 });
 

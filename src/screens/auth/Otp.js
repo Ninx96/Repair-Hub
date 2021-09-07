@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View } from "react-native";
+import { Image, SafeAreaView, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Style from "../../styles/Style";
 
-const Otp = () => {
+const Otp = (props) => {
   return (
     <SafeAreaView style={Style.container}>
+      <View>
+        <Image
+          source={require("../../../assets/img/logo.png")}
+          style={{ height: 100, width: 150 }}
+        />
+      </View>
       <View style={Style.form}>
         <Text style={Style.heading}>Verification</Text>
         <Text style={{ fontSize: 25 }}>
-          Enter 6 digit verification code we've sent on your given number
+          Enter 6 digit verification code sent on your given email
         </Text>
       </View>
 
@@ -42,6 +48,7 @@ const Otp = () => {
           style={Style.button}
           uppercase={false}
           labelStyle={Style.buttonLabel}
+          onPress={() => props.navigation.navigate("Register")}
         >
           Continue
         </Button>
