@@ -3,9 +3,8 @@ import { StyleSheet, StatusBar, Platform } from "react-native";
 const Style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#FAF9F6",
     alignItems: "center",
-    justifyContent: "space-evenly",
     paddingTop: Platform.OS == "android" ? StatusBar.currentHeight : 0,
   },
   heading: {

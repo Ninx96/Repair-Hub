@@ -150,7 +150,7 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
-            <DrawerComponent />
+            <AuthStackComponent />
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>

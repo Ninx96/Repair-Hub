@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Image, SafeAreaView, View } from "react-native";
-import { Button, Card, IconButton, Text } from "react-native-paper";
+import { Button, Card, IconButton, Snackbar, Text } from "react-native-paper";
 import Style from "../../styles/Style";
 
 const UserType = (props) => {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState("client");
+  const [error, setError] = useState(null);
   return (
     <SafeAreaView style={Style.container}>
-      <View>
+      <View style={{ flexDirection: "row", width: "100%" }}>
+        <IconButton
+          icon=""
+          size={35}
+          //onPress={() => props.navigation.goBack()}
+        />
+      </View>
+
+      <View style={{ marginBottom: "40%" }}>
         <Image
           source={require("../../../assets/img/logo.png")}
           style={{ height: 100, width: 150 }}
         />
       </View>
-      <View style={{}}>
+      <View style={{ marginBottom: 50 }}>
         <Text style={Style.heading}>Select User Type</Text>
       </View>
 
@@ -22,6 +31,7 @@ const UserType = (props) => {
           flexWrap: "wrap",
           flexDirection: "row",
           justifyContent: "center",
+          marginBottom: "auto",
         }}
       >
         <ItemType
@@ -44,17 +54,31 @@ const UserType = (props) => {
         />
       </View>
 
-      <View style={{}}>
+      <View style={{ marginBottom: "20%" }}>
         <Button
           mode="contained"
           style={{ height: 40, width: 200, borderRadius: 50 }}
           labelStyle={{ fontSize: 25 }}
           uppercase={false}
-          onPress={() => props.navigation.navigate("Login")}
+          onPress={() => {
+            if (!selected) {
+              return setError({ message: "Please select an option first" });
+            }
+            props.navigation.navigate("Login", { type: selected });
+          }}
         >
           Next
         </Button>
       </View>
+      <Snackbar
+        visible={error}
+        style={{ backgroundColor: "#d9534f" }}
+        onDismiss={() => setError(null)}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>
+          {error?.message}
+        </Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };
@@ -71,6 +95,7 @@ const ItemType = ({ icon, title, selected, onPress, value }) => {
         alignItems: "center",
         justifyContent: "center",
         marginHorizontal: 10,
+        backgroundColor: "#FFF",
       }}
       onPress={() => onPress(value)}
     >
