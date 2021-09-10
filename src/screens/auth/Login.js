@@ -18,7 +18,7 @@ const Login = (props) => {
     email: "",
     password: "",
   });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({});
 
   return (
     <ScrollView>
@@ -31,7 +31,7 @@ const Login = (props) => {
           />
         </View>
 
-        <View style={{ marginBottom: "40%" }}>
+        <View style={{ marginBottom: "20%" }}>
           <Image
             source={require("../../../assets/img/logo.png")}
             style={{ height: 100, width: 150 }}
@@ -42,16 +42,21 @@ const Login = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter Phone/Email</Text>
             <TextInput
+              error={error.email ? true : false}
               mode="outlined"
               placeholder="Enter Phone/Email"
               style={Style.input}
               onChangeText={(text) => setParams({ ...params, email: text })}
             />
+            {error.email ? (
+              <Text style={Style.textError}>{error?.email}</Text>
+            ) : null}
           </View>
 
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter Password</Text>
             <TextInput
+              error={error.password ? true : false}
               mode="outlined"
               placeholder="Enter Password"
               style={Style.input}
@@ -64,6 +69,9 @@ const Login = (props) => {
                 />
               }
             />
+            {error.password ? (
+              <Text style={Style.textError}>{error?.email}</Text>
+            ) : null}
           </View>
 
           <Button
@@ -76,12 +84,16 @@ const Login = (props) => {
               for (let i in params) {
                 form_data.append(i, params[i]);
               }
-              postRequest("client-login", form_data).then((res) => {
+              postRequest(
+                type == "client" ? "client-login" : "vendor-login",
+                form_data
+              ).then((res) => {
                 console.log(res);
                 if (res.s) {
-                  return props.navigation.navigate("Otp");
+                  return props.navigation.navigate("Otp", { user: res.data });
                 }
-                setError(res);
+
+                return setError(res.error);
               });
             }}
           >
@@ -89,7 +101,7 @@ const Login = (props) => {
           </Button>
         </View>
 
-        <View style={[Style.form, { marginVertical: "20%" }]}>
+        <View style={[Style.form, { marginVertical: "10%" }]}>
           <Text style={[Style.textRegular, { textAlign: "center" }]}>
             Don't have an Account ?
           </Text>
@@ -102,15 +114,6 @@ const Login = (props) => {
             Sign Up
           </Button>
         </View>
-        <Snackbar
-          visible={error}
-          style={{ backgroundColor: "#d9534f" }}
-          onDismiss={() => setError(null)}
-        >
-          <Text style={[Style.textRegular, { color: "#FFF" }]}>
-            {error?.msg}
-          </Text>
-        </Snackbar>
       </SafeAreaView>
     </ScrollView>
   );

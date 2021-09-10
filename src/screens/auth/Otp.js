@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Image, SafeAreaView, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
+import { AuthContext } from "../../components/ContextComponent";
+import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Otp = (props) => {
+  const { signIn } = useContext(AuthContext);
+  const { type, user } = props.route.params;
+  const [param, setParam] = useState({ otp: "" });
   return (
     <SafeAreaView style={Style.container}>
       <View>
@@ -26,6 +31,7 @@ const Otp = (props) => {
             mode="outlined"
             placeholder="Enter 6 Digit OTP"
             style={Style.input}
+            onChangeText={(text) => setParam({ ...param, otp: text })}
           />
         </View>
         <View style={Style.formControl}>
@@ -48,7 +54,15 @@ const Otp = (props) => {
           style={Style.button}
           uppercase={false}
           labelStyle={Style.buttonLabel}
-          onPress={() => props.navigation.navigate("Register")}
+          onPress={() => {
+            if (param.otp == "123456") {
+              return signIn({
+                type: "LOGIN",
+                user_token: user.id,
+                user: user,
+              });
+            }
+          }}
         >
           Continue
         </Button>

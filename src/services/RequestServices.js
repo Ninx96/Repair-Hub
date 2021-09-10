@@ -8,7 +8,7 @@ export const postRequest = (path, body, header) => {
       "Content-Type": "multipart/form-data",
       ...header,
     },
-    body: JSON.stringify(body),
+    body: body,
   })
     .then((res) => res.json())
     .catch((err) => {

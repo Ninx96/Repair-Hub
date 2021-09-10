@@ -35,6 +35,7 @@ const Style = StyleSheet.create({
   textRegular: {
     fontSize: 25,
   },
+  textError: { color: "#d9534f", fontSize: 20 },
 });
 
 export default Style;

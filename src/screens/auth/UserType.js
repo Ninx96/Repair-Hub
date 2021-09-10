@@ -16,7 +16,7 @@ const UserType = (props) => {
         />
       </View>
 
-      <View style={{ marginBottom: "40%" }}>
+      <View style={{ marginBottom: "20%" }}>
         <Image
           source={require("../../../assets/img/logo.png")}
           style={{ height: 100, width: 150 }}
@@ -31,7 +31,6 @@ const UserType = (props) => {
           flexWrap: "wrap",
           flexDirection: "row",
           justifyContent: "center",
-          marginBottom: "auto",
         }}
       >
         <ItemType
@@ -54,13 +53,14 @@ const UserType = (props) => {
         />
       </View>
 
-      <View style={{ marginBottom: "20%" }}>
+      <View style={{ marginVertical: "10%" }}>
         <Button
           mode="contained"
           style={{ height: 40, width: 200, borderRadius: 50 }}
           labelStyle={{ fontSize: 25 }}
           uppercase={false}
           onPress={() => {
+            console.log("pressed");
             if (!selected) {
               return setError({ message: "Please select an option first" });
             }
