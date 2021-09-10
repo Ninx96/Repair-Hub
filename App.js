@@ -61,6 +61,7 @@ export default function App() {
     isLoading: true,
     user: null,
     userToken: null,
+    userType: null,
   };
 
   const loginReducer = (prevState, action) => {
@@ -70,6 +71,7 @@ export default function App() {
           ...prevState,
           userToken: action.user_token,
           user: action.user,
+          userType: action.user_type,
           isLoading: false,
         };
       case "LOGIN":
@@ -77,6 +79,7 @@ export default function App() {
           ...prevState,
           userToken: action.user_token,
           user: action.user,
+          userType: action.user_type,
           isLoading: false,
         };
       case "LOGOUT":
@@ -84,6 +87,7 @@ export default function App() {
           ...prevState,
           user: null,
           userToken: null,
+          userType: null,
           isLoading: false,
         };
     }
@@ -96,11 +100,12 @@ export default function App() {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async ({ userToken, user }) => {
+      signIn: async ({ userToken, user, userType }) => {
         console.log(userToken);
         const userData = JSON.stringify(user);
         try {
           await SecureStore.setItemAsync("userToken", String(userToken));
+          await SecureStore.setItemAsync("userType", userType);
           await SecureStore.setItemAsync("user", userData);
         } catch (e) {
           console.log(e);
@@ -109,6 +114,7 @@ export default function App() {
           type: "LOGIN",
           user: user,
           user_token: userToken,
+          user_type: userType,
         });
       },
       signOut: async () => {
@@ -119,6 +125,9 @@ export default function App() {
         }
         dispatch({ type: "LOGOUT" });
       },
+      getUserState: () => {
+        return loginState;
+      },
     }),
     []
   );
@@ -128,9 +137,11 @@ export default function App() {
       {
         let userToken = null;
         let user = null;
+        let userType = null;
 
         try {
           userToken = await SecureStore.getItemAsync("userToken");
+          userType = await SecureStore.getItemAsync("userType");
           user = await SecureStore.getItemAsync("user");
         } catch (e) {
           console.log(e);
@@ -138,6 +149,7 @@ export default function App() {
         dispatch({
           type: "RETRIEVE_TOKEN",
           user_token: userToken,
+          user_type: userType,
           user: user,
         });
       }
@@ -153,7 +165,7 @@ export default function App() {
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
             {loginState.userToken ? (
-              <DrawerComponent />
+              <DrawerComponent userState={loginState} />
             ) : (
               <AuthStackComponent />
             )}

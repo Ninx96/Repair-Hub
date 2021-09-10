@@ -1,13 +1,19 @@
 import moment from "moment";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { Card, Text } from "react-native-paper";
+import { AuthContext } from "../../components/ContextComponent";
 import Style from "../../styles/Style";
 
 const Dashboard = (props) => {
+  const { getUserState } = useContext(AuthContext);
+  const userState = getUserState();
+
+  useEffect(() => {}, []);
+
   return (
-    <SafeAreaView style={Style.container}>
+    <SafeAreaView style={(Style.container, { alignItems: "center" })}>
       <Text style={Style.heading}>My Tasks</Text>
 
       <FlatList

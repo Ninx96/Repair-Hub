@@ -4,7 +4,6 @@ const Style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FAF9F6",
-    alignItems: "center",
     paddingTop: Platform.OS == "android" ? StatusBar.currentHeight : 0,
   },
   heading: {

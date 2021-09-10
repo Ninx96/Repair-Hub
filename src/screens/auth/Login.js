@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, SafeAreaView, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Image, SafeAreaView, View, ScrollView } from "react-native";
 import {
   Button,
   IconButton,
@@ -21,16 +20,16 @@ const Login = (props) => {
   const [error, setError] = useState({});
 
   return (
-    <ScrollView>
-      <SafeAreaView style={Style.container}>
-        <View style={{ flexDirection: "row", width: "100%" }}>
-          <IconButton
-            icon="chevron-left"
-            size={35}
-            onPress={() => props.navigation.goBack()}
-          />
-        </View>
+    <SafeAreaView style={Style.container}>
+      <View style={{ flexDirection: "row", width: "100%" }}>
+        <IconButton
+          icon="chevron-left"
+          size={35}
+          onPress={() => props.navigation.goBack()}
+        />
+      </View>
 
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <View style={{ marginBottom: "20%" }}>
           <Image
             source={require("../../../assets/img/logo.png")}
@@ -118,8 +117,8 @@ const Login = (props) => {
             Sign Up
           </Button>
         </View>
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

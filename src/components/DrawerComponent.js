@@ -4,7 +4,7 @@ import DrawerLayout from "../layouts/DrawerLayout";
 import Dashboard from "../screens/Dashboard/Dashboard";
 import Profile from "../screens/Profile";
 
-const DrawerComponent = () => {
+const DrawerComponent = ({ userState }) => {
   const Drawer = createDrawerNavigator();
   return (
     <Drawer.Navigator
@@ -12,8 +12,16 @@ const DrawerComponent = () => {
       drawerContent={(props) => <DrawerLayout {...props} />}
       screenOptions={{ title: "" }}
     >
-      <Drawer.Screen name="Home" component={Dashboard} />
-      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen
+        name="Home"
+        component={Dashboard}
+        initialParams={userState}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        initialParams={userState}
+      />
     </Drawer.Navigator>
   );
 };

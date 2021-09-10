@@ -10,6 +10,7 @@ const Register = (props) => {
   const [error, setError] = useState({});
   const [params, setParams] = useState({
     company_name: "",
+    name: "",
     email: "",
     mobile: "",
     password: "",
@@ -17,16 +18,15 @@ const Register = (props) => {
   });
 
   return (
-    <ScrollView>
-      <SafeAreaView style={Style.container}>
-        <View style={{ flexDirection: "row", width: "100%" }}>
-          <IconButton
-            icon="chevron-left"
-            size={35}
-            onPress={() => props.navigation.goBack()}
-          />
-        </View>
-
+    <SafeAreaView style={Style.container}>
+      <View style={{ flexDirection: "row", width: "100%" }}>
+        <IconButton
+          icon="chevron-left"
+          size={35}
+          onPress={() => props.navigation.goBack()}
+        />
+      </View>
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <View style={{ marginBottom: "20%" }}>
           <Image
             source={require("../../../assets/img/logo.png")}
@@ -34,22 +34,28 @@ const Register = (props) => {
           />
         </View>
 
-        <Text style={Style.heading}>Create Account</Text>
+        <Text style={[Style.heading, { marginBottom: 20 }]}>
+          Create Account
+        </Text>
 
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Company Name</Text>
+            <Text style={Style.label}>
+              {type == "client" ? "Company Name" : "Name"}
+            </Text>
             <TextInput
               error={error.company_name ? true : false}
               mode="outlined"
               placeholder="Enter Full Name"
               style={Style.input}
               onChangeText={(text) =>
-                setParams({ ...params, company_name: text })
+                setParams({ ...params, company_name: text, name: text })
               }
             />
-            {error.company_name ? (
-              <Text style={Style.textError}>{error?.company_name}</Text>
+            {error.company_name || error.name ? (
+              <Text style={Style.textError}>
+                {error?.company_name || error?.name}
+              </Text>
             ) : null}
           </View>
 
@@ -122,9 +128,15 @@ const Register = (props) => {
               for (let i in params) {
                 form_data.append(i, params[i]);
               }
-              postRequest("client-register", form_data).then((res) => {
+              postRequest(
+                type == "client" ? "client-register" : "vendor-register",
+                form_data
+              ).then((res) => {
                 if (res.s) {
-                  return;
+                  return props.navigation.navigate("Otp", {
+                    user: res.data,
+                    type: type,
+                  });
                 }
                 setError(res.error);
               });
@@ -142,8 +154,8 @@ const Register = (props) => {
             Terms & Conditions
           </Button>
         </View>
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
