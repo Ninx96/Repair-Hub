@@ -60,7 +60,6 @@ const UserType = (props) => {
           labelStyle={{ fontSize: 25 }}
           uppercase={false}
           onPress={() => {
-            console.log("pressed");
             if (!selected) {
               return setError({ message: "Please select an option first" });
             }

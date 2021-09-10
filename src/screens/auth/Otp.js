@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Image, SafeAreaView, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
@@ -11,13 +11,20 @@ const Otp = (props) => {
   const [param, setParam] = useState({ otp: "" });
   return (
     <SafeAreaView style={Style.container}>
-      <View>
+      <View style={{ flexDirection: "row", width: "100%" }}>
+        <IconButton
+          icon="chevron-left"
+          size={35}
+          onPress={() => props.navigation.goBack()}
+        />
+      </View>
+      <View style={{ marginBottom: "20%" }}>
         <Image
           source={require("../../../assets/img/logo.png")}
           style={{ height: 100, width: 150 }}
         />
       </View>
-      <View style={Style.form}>
+      <View style={[Style.form, { marginBottom: 20 }]}>
         <Text style={Style.heading}>Verification</Text>
         <Text style={{ fontSize: 25 }}>
           Enter 6 digit verification code sent on your given email
@@ -55,10 +62,11 @@ const Otp = (props) => {
           uppercase={false}
           labelStyle={Style.buttonLabel}
           onPress={() => {
+            console.log(type);
             if (param.otp == "123456") {
               return signIn({
                 type: "LOGIN",
-                user_token: user.id,
+                userToken: user.id,
                 user: user,
               });
             }

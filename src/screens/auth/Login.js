@@ -88,9 +88,11 @@ const Login = (props) => {
                 type == "client" ? "client-login" : "vendor-login",
                 form_data
               ).then((res) => {
-                console.log(res);
                 if (res.s) {
-                  return props.navigation.navigate("Otp", { user: res.data });
+                  return props.navigation.navigate("Otp", {
+                    user: res.data,
+                    type: type,
+                  });
                 }
 
                 return setError(res.error);
@@ -109,7 +111,9 @@ const Login = (props) => {
             mode="text"
             uppercase={false}
             labelStyle={{ fontSize: 25 }}
-            onPress={() => props.navigation.navigate("Register")}
+            onPress={() =>
+              props.navigation.navigate("Register", { type: type })
+            }
           >
             Sign Up
           </Button>

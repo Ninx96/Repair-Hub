@@ -97,9 +97,11 @@ export default function App() {
   const authContext = React.useMemo(
     () => ({
       signIn: async ({ userToken, user }) => {
+        console.log(userToken);
+        const userData = JSON.stringify(user);
         try {
-          await SecureStore.setItemAsync("userToken", userToken);
-          await SecureStore.setItemAsync("user", user);
+          await SecureStore.setItemAsync("userToken", String(userToken));
+          await SecureStore.setItemAsync("user", userData);
         } catch (e) {
           console.log(e);
         }
@@ -150,7 +152,11 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
-            <AuthStackComponent />
+            {loginState.userToken ? (
+              <DrawerComponent />
+            ) : (
+              <AuthStackComponent />
+            )}
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>
