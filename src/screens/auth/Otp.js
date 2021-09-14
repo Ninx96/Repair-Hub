@@ -71,6 +71,7 @@ const Otp = (props) => {
                 return signIn({
                   type: "LOGIN",
                   userToken: user.id,
+                  userType: type,
                   user: user,
                 });
               }

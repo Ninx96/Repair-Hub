@@ -7,11 +7,8 @@ import { AuthContext } from "../../components/ContextComponent";
 import Style from "../../styles/Style";
 
 const Dashboard = (props) => {
-  const { getUserState } = useContext(AuthContext);
-  const userState = getUserState();
-
-  useEffect(() => {}, []);
-
+  const { getSession } = useContext(AuthContext);
+  const { userType, user } = getSession();
   return (
     <SafeAreaView style={(Style.container, { alignItems: "center" })}>
       <Text style={Style.heading}>My Tasks</Text>

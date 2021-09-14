@@ -90,6 +90,11 @@ export default function App() {
           userType: null,
           isLoading: false,
         };
+      case "UPDATE_USER":
+        return {
+          ...prevState,
+          user: action.user,
+        };
     }
   };
 
@@ -101,7 +106,6 @@ export default function App() {
   const authContext = React.useMemo(
     () => ({
       signIn: async ({ userToken, user, userType }) => {
-        console.log(userToken);
         const userData = JSON.stringify(user);
         try {
           await SecureStore.setItemAsync("userToken", String(userToken));
@@ -125,11 +129,23 @@ export default function App() {
         }
         dispatch({ type: "LOGOUT" });
       },
-      getUserState: () => {
+      getSession: () => {
         return loginState;
       },
+      updateUser: async (user) => {
+        const userData = JSON.stringify(user);
+        try {
+          await SecureStore.setItemAsync("user", userData);
+        } catch (e) {
+          console.log(e);
+        }
+        dispatch({
+          type: "UPDATE_USER",
+          user: user,
+        });
+      },
     }),
-    []
+    [loginState]
   );
 
   React.useEffect(() => {
@@ -150,7 +166,7 @@ export default function App() {
           type: "RETRIEVE_TOKEN",
           user_token: userToken,
           user_type: userType,
-          user: user,
+          user: JSON.parse(user),
         });
       }
     };
@@ -165,7 +181,7 @@ export default function App() {
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
             {loginState.userToken ? (
-              <DrawerComponent userState={loginState} />
+              <DrawerComponent />
             ) : (
               <AuthStackComponent />
             )}
