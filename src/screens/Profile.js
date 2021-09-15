@@ -23,6 +23,7 @@ const Profile = () => {
     name: user.name,
   });
   const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(null);
   const [showMessage, setShowMessage] = useState(null);
 
@@ -37,6 +38,7 @@ const Profile = () => {
               {userType == "client" ? "Company Name" : "Full Name"}
             </Text>
             <TextInput
+              disabled={loading}
               mode="outlined"
               placeholder="Enter Full Name"
               style={Style.input}
@@ -109,6 +111,7 @@ const Profile = () => {
             ) : null}
 
             <Button
+              disabled={loading}
               mode="outlined"
               style={[
                 Style.button,
@@ -133,11 +136,14 @@ const Profile = () => {
           </View>
 
           <Button
+            loading={loading}
+            disabled={loading}
             mode="contained"
             style={[Style.button, { borderWidth: 1.5, borderColor: "#4285F4" }]}
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
+              setLoading(true);
               const form_data = new FormData();
               var proceed = true;
               var validation = {};
@@ -150,12 +156,13 @@ const Profile = () => {
               }
               setError({ ...validation });
               if (proceed) {
-                postRequest(
+                return postRequest(
                   userType == "client"
                     ? "client-edit-profile"
                     : "vendor-edit-profile",
                   form_data
                 ).then((res) => {
+                  setLoading(false);
                   if (res.s) {
                     updateUser({
                       ...user,
@@ -174,6 +181,7 @@ const Profile = () => {
                   setError(res.error);
                 });
               }
+              setLoading(false);
             }}
           >
             Save Changes

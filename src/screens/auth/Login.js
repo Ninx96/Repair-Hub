@@ -18,6 +18,7 @@ const Login = (props) => {
     password: "",
   });
   const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
 
   return (
     <SafeAreaView style={Style.container}>
@@ -41,6 +42,7 @@ const Login = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter Phone/Email</Text>
             <TextInput
+              disabled={loading}
               error={error.email ? true : false}
               mode="outlined"
               placeholder="Enter Phone/Email"
@@ -55,6 +57,7 @@ const Login = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter Password</Text>
             <TextInput
+              disabled={loading}
               error={error.password ? true : false}
               mode="outlined"
               placeholder="Enter Password"
@@ -74,11 +77,14 @@ const Login = (props) => {
           </View>
 
           <Button
+            disabled={loading}
+            loading={loading}
             mode="contained"
             style={Style.button}
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
+              setLoading(true);
               const form_data = new FormData();
               var proceed = true;
               var validation = {};
@@ -95,6 +101,8 @@ const Login = (props) => {
                   type == "client" ? "client-login" : "vendor-login",
                   form_data
                 ).then((res) => {
+                  console.log(res);
+                  setLoading(false);
                   if (res.s) {
                     return props.navigation.navigate("Otp", {
                       user: res.data,
@@ -102,9 +110,10 @@ const Login = (props) => {
                     });
                   }
 
-                  return setError(res.error);
+                  setError(res.error);
                 });
               }
+              setLoading(false);
             }}
           >
             Login

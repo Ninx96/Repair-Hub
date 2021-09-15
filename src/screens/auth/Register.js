@@ -8,6 +8,8 @@ import Style from "../../styles/Style";
 const Register = (props) => {
   const { type } = props.route.params;
   const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const [params, setParams] = useState({
     company_name: "",
     name: "",
@@ -44,6 +46,7 @@ const Register = (props) => {
               {type == "client" ? "Company Name" : "Name"}
             </Text>
             <TextInput
+              disabled={loading}
               error={error.company_name ? true : false}
               mode="outlined"
               placeholder="Enter Full Name"
@@ -62,6 +65,7 @@ const Register = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Phone Number</Text>
             <TextInput
+              disabled={loading}
               error={error.mobile ? true : false}
               mode="outlined"
               placeholder="Enter Phone Number"
@@ -76,6 +80,7 @@ const Register = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Email Address</Text>
             <TextInput
+              disabled={loading}
               error={error.email ? true : false}
               mode="outlined"
               placeholder="Enter Email Address"
@@ -90,6 +95,7 @@ const Register = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter Password</Text>
             <TextInput
+              disabled={loading}
               error={error.password ? true : false}
               mode="outlined"
               placeholder="Enter Password"
@@ -105,6 +111,7 @@ const Register = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Confirm Password</Text>
             <TextInput
+              disabled={loading}
               error={error.confirm_password ? true : false}
               mode="outlined"
               placeholder="Confirm Password"
@@ -119,11 +126,14 @@ const Register = (props) => {
           </View>
 
           <Button
+            disabled={loading}
+            loading={loading}
             mode="contained"
             style={Style.button}
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
+              setLoading(true);
               const form_data = new FormData();
               var proceed = true;
               var validation = {};
@@ -136,10 +146,11 @@ const Register = (props) => {
               }
               setError({ ...validation });
               if (proceed) {
-                postRequest(
+                return postRequest(
                   type == "client" ? "client-register" : "vendor-register",
                   form_data
                 ).then((res) => {
+                  setLoading(false);
                   if (res.s) {
                     return props.navigation.navigate("Otp", {
                       user: res.data,
@@ -149,6 +160,7 @@ const Register = (props) => {
                   setError(res.error);
                 });
               }
+              setLoading(false);
             }}
           >
             Sign Up
