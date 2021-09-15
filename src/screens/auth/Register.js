@@ -98,7 +98,7 @@ const Register = (props) => {
               onChangeText={(text) => setParams({ ...params, password: text })}
             />
             {error.password ? (
-              <Text style={Style.textError}>{error?.email}</Text>
+              <Text style={Style.textError}>{error?.password}</Text>
             ) : null}
           </View>
 
@@ -125,21 +125,30 @@ const Register = (props) => {
             labelStyle={Style.buttonLabel}
             onPress={() => {
               const form_data = new FormData();
+              var proceed = true;
+              var validation = {};
               for (let i in params) {
+                if (!params[i]) {
+                  validation[i] = "This field is required";
+                  proceed = false;
+                }
                 form_data.append(i, params[i]);
               }
-              postRequest(
-                type == "client" ? "client-register" : "vendor-register",
-                form_data
-              ).then((res) => {
-                if (res.s) {
-                  return props.navigation.navigate("Otp", {
-                    user: res.data,
-                    type: type,
-                  });
-                }
-                setError(res.error);
-              });
+              setError({ ...validation });
+              if (proceed) {
+                postRequest(
+                  type == "client" ? "client-register" : "vendor-register",
+                  form_data
+                ).then((res) => {
+                  if (res.s) {
+                    return props.navigation.navigate("Otp", {
+                      user: res.data,
+                      type: type,
+                    });
+                  }
+                  setError(res.error);
+                });
+              }
             }}
           >
             Sign Up

@@ -23,7 +23,7 @@ const Profile = () => {
     name: user.name,
   });
   const [error, setError] = useState({});
-  const [modal, setModal] = useState(false);
+  const [address, setAddress] = useState(null);
   const [showMessage, setShowMessage] = useState(null);
 
   return (
@@ -117,7 +117,15 @@ const Profile = () => {
               uppercase={false}
               labelStyle={Style.buttonLabel}
               onPress={() => {
-                setModal(true);
+                setAddress({
+                  address: "",
+                  area_name: "",
+                  city_name: "",
+                  state: "",
+                  state_id: "",
+                  city_id: "",
+                  pincode: "",
+                });
               }}
             >
               Add New Address
@@ -131,32 +139,41 @@ const Profile = () => {
             labelStyle={Style.buttonLabel}
             onPress={() => {
               const form_data = new FormData();
+              var proceed = true;
+              var validation = {};
               for (let i in param) {
+                if (!param[i]) {
+                  validation[i] = "This field is required";
+                  proceed = false;
+                }
                 form_data.append(i, param[i]);
               }
-              postRequest(
-                userType == "client"
-                  ? "client-edit-profile"
-                  : "vendor-edit-profile",
-                form_data
-              ).then((res) => {
-                console.log(res);
-                if (res.s) {
-                  updateUser({
-                    ...user,
-                    company_name: param.company_name,
-                    address: param.address,
-                    city_id: param.city_id,
-                    city_name: param.city_name,
-                    state_id: param.state_id,
-                    pincode: param.pincode,
-                  });
-                  setShowMessage({
-                    msg: "Profile Updated Successfully..!",
-                  });
-                }
-                setError(res.error);
-              });
+              setError({ ...validation });
+              if (proceed) {
+                postRequest(
+                  userType == "client"
+                    ? "client-edit-profile"
+                    : "vendor-edit-profile",
+                  form_data
+                ).then((res) => {
+                  if (res.s) {
+                    updateUser({
+                      ...user,
+                      company_name: param.company_name,
+                      address: param.address,
+                      city_id: param.city_id,
+                      city_name: param.city_name,
+                      state_id: param.state_id,
+                      pincode: param.pincode,
+                    });
+                    setShowMessage({
+                      msg: "Profile Updated Successfully..!",
+                    });
+                    return;
+                  }
+                  setError(res.error);
+                });
+              }
             }}
           >
             Save Changes
@@ -165,7 +182,7 @@ const Profile = () => {
       </ScrollView>
       <Portal>
         <Modal
-          visible={modal}
+          visible={address}
           dismissable={false}
           contentContainerStyle={[Style.container, { paddingTop: 0 }]}
         >
@@ -173,7 +190,7 @@ const Profile = () => {
             <IconButton
               icon="chevron-left"
               size={35}
-              onPress={() => setModal(false)}
+              onPress={() => setAddress(null)}
             />
           </View>
           <ScrollView contentContainerStyle={{ alignItems: "center" }}>
@@ -186,8 +203,14 @@ const Profile = () => {
                   mode="outlined"
                   placeholder="Enter Address"
                   style={Style.input}
-                  onChangeText={(text) => setParam({ ...param, address: text })}
+                  onChangeText={(text) =>
+                    setAddress({ ...address, address: text })
+                  }
+                  error={error.address ? true : false}
                 />
+                {error.address ? (
+                  <Text style={Style.textError}>{error?.address}</Text>
+                ) : null}
               </View>
 
               <View style={Style.formControl}>
@@ -197,9 +220,13 @@ const Profile = () => {
                   placeholder="Enter Area"
                   style={Style.input}
                   onChangeText={(text) =>
-                    setParam({ ...param, area_name: text })
+                    setAddress({ ...address, area_name: text })
                   }
+                  error={error.area_name ? true : false}
                 />
+                {error.area_name ? (
+                  <Text style={Style.textError}>{error?.area_name}</Text>
+                ) : null}
               </View>
 
               <View style={Style.formControl}>
@@ -219,8 +246,8 @@ const Profile = () => {
                         form_data
                       ).then((res) => {
                         if (res.s) {
-                          setParam({
-                            ...param,
+                          setAddress({
+                            ...address,
                             city_name: res.city,
                             state: res.state,
                             state_id: res.state_id,
@@ -231,18 +258,28 @@ const Profile = () => {
                       });
                     }
                   }}
+                  error={error.pincode ? true : false}
                 />
+                {error.pincode ? (
+                  <Text style={Style.textError}>{error?.pincode}</Text>
+                ) : null}
               </View>
 
               <View style={Style.formControl}>
                 <Text style={Style.label}>City</Text>
                 <TextInput
-                  disabled
                   mode="outlined"
                   placeholder="Enter City"
                   style={Style.input}
-                  value={param.city_name}
+                  value={address?.city_name}
+                  onChangeText={(text) =>
+                    setAddress({ ...address, city_name: text })
+                  }
+                  error={error.address ? true : false}
                 />
+                {error.pincode ? (
+                  <Text style={Style.textError}>{error?.pincode}</Text>
+                ) : null}
               </View>
 
               <View style={Style.formControl}>
@@ -252,7 +289,7 @@ const Profile = () => {
                   mode="outlined"
                   placeholder="Enter State"
                   style={Style.input}
-                  value={param.state}
+                  value={address?.state}
                 />
               </View>
 
@@ -261,7 +298,21 @@ const Profile = () => {
                 style={Style.button}
                 uppercase={false}
                 labelStyle={Style.buttonLabel}
-                onPress={() => setModal(false)}
+                onPress={() => {
+                  var validation = {};
+                  var proceed = true;
+                  for (let i in address) {
+                    if (!address[i]) {
+                      validation[i] = "This field is required";
+                      proceed = false;
+                    }
+                  }
+                  setError({ ...validation });
+                  if (proceed) {
+                    setParam({ ...param, ...address });
+                    setAddress(null);
+                  }
+                }}
               >
                 Save
               </Button>

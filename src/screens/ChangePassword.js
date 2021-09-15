@@ -75,24 +75,32 @@ const ChangePassword = () => {
             onPress={() => {
               const form_data = new FormData();
               form_data.append("client_id", userToken);
+              var proceed = true;
+              var validation = {};
               for (let i in params) {
+                if (!params[i]) {
+                  validation[i] = "This field is required";
+                  proceed = false;
+                }
                 form_data.append(i, params[i]);
               }
-              console.log(form_data);
-              postRequest(
-                userType == "client"
-                  ? "client-change-password"
-                  : "vendor-change-password",
-                form_data
-              ).then((res) => {
-                setParams({});
-                if (res.s) {
-                  return setShowMessage({
-                    msg: "Password Updated Successfully..!",
-                  });
-                }
-                setError(res.error);
-              });
+              setError({ ...validation });
+              if (proceed) {
+                postRequest(
+                  userType == "client"
+                    ? "client-change-password"
+                    : "vendor-change-password",
+                  form_data
+                ).then((res) => {
+                  setParams({});
+                  if (res.s) {
+                    return setShowMessage({
+                      msg: "Password Updated Successfully..!",
+                    });
+                  }
+                  setError(res.error);
+                });
+              }
             }}
           >
             Continue
