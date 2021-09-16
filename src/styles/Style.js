@@ -34,6 +34,9 @@ const Style = StyleSheet.create({
   textRegular: {
     fontSize: 25,
   },
+  textSmall: {
+    fontSize: 20,
+  },
   textError: { color: "#d9534f", fontSize: 20 },
 });
 

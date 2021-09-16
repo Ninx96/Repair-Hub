@@ -15,6 +15,7 @@ import { AuthContext } from "./src/components/ContextComponent";
 import AuthStackComponent from "./src/components/AuthStackComponent";
 import Dashboard from "./src/screens/Dashboard/Dashboard";
 import DrawerComponent from "./src/components/DrawerComponent";
+import UpdateStatus from "./src/screens/Dashboard/UpdateStatus";
 
 export default function App() {
   const [resourcesLoaded, setResourcesLoaded] = useState(false);
@@ -180,11 +181,12 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
-            {loginState.userToken ? (
+            {/* {loginState.userToken ? (
               <DrawerComponent />
             ) : (
               <AuthStackComponent />
-            )}
+            )} */}
+            <UpdateStatus />
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>
