@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { DataTable, Text, TextInput } from "react-native-paper";
+import { Button, DataTable, Text, TextInput } from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import Style from "../../styles/Style";
 
@@ -14,7 +14,7 @@ const UpdateStatus = (props) => {
   const [param, setParam] = useState({});
   return (
     <SafeAreaView style={Style.container}>
-      <ScrollView contentContainerStyle={{ alignItems: "center", flex: 1 }}>
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <Text style={[Style.heading, { marginBottom: 20 }]}>Update Status</Text>
         <View style={Style.form}>
           <View style={Style.formControl}>
@@ -57,36 +57,51 @@ const UpdateStatus = (props) => {
               </Text>
             ) : null}
           </View>
+
+          <DataTable>
+            <DataTable.Header style={{ backgroundColor: "#4285F4" }}>
+              <DataTable.Cell>
+                <Text style={[Style.textRegular, { color: "#FFF" }]}>
+                  Status
+                </Text>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <Text style={[Style.textRegular, { color: "#FFF" }]}>
+                  Remarks
+                </Text>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <Text style={[Style.textRegular, { color: "#FFF" }]}>
+                  Date-Time
+                </Text>
+              </DataTable.Cell>
+            </DataTable.Header>
+            <ScrollView>
+              <DataTable.Row>
+                <DataTable.Cell>
+                  <Text style={Style.textSmall}>Status</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text style={Style.textSmall}>Remarks</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text style={Style.textSmall}>Date-Time</Text>
+                </DataTable.Cell>
+              </DataTable.Row>
+            </ScrollView>
+          </DataTable>
+
+          <Button
+            mode="contained"
+            style={Style.button}
+            uppercase={false}
+            labelStyle={Style.buttonLabel}
+            onPress={() => {}}
+          >
+            Save
+          </Button>
         </View>
       </ScrollView>
-      <DataTable style={{ flex: 1 }}>
-        <DataTable.Header style={{ backgroundColor: "#4285F4" }}>
-          <DataTable.Cell>
-            <Text style={[Style.textRegular, { color: "#FFF" }]}>Status</Text>
-          </DataTable.Cell>
-          <DataTable.Cell>
-            <Text style={[Style.textRegular, { color: "#FFF" }]}>Remarks</Text>
-          </DataTable.Cell>
-          <DataTable.Cell>
-            <Text style={[Style.textRegular, { color: "#FFF" }]}>
-              Date-Time
-            </Text>
-          </DataTable.Cell>
-        </DataTable.Header>
-        <ScrollView>
-          <DataTable.Row>
-            <DataTable.Cell>
-              <Text style={Style.textSmall}>Status</Text>
-            </DataTable.Cell>
-            <DataTable.Cell>
-              <Text style={Style.textSmall}>Remarks</Text>
-            </DataTable.Cell>
-            <DataTable.Cell>
-              <Text style={Style.textSmall}>Date-Time</Text>
-            </DataTable.Cell>
-          </DataTable.Row>
-        </ScrollView>
-      </DataTable>
     </SafeAreaView>
   );
 };
