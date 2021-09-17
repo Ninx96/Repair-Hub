@@ -23,6 +23,7 @@ const Style = StyleSheet.create({
     borderRadius: 5,
     height: 60,
     marginTop: 20,
+    marginBottom: 10,
   },
   buttonLabel: {
     fontSize: 30,
@@ -38,6 +39,7 @@ const Style = StyleSheet.create({
     fontSize: 20,
   },
   textError: { color: "#d9534f", fontSize: 20 },
+  textWarning: { color: "#f0ad4e", fontSize: 20 },
 });
 
 export default Style;

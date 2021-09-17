@@ -13,9 +13,8 @@ import * as Font from "expo-font";
 import { AuthContext } from "./src/components/ContextComponent";
 
 import AuthStackComponent from "./src/components/AuthStackComponent";
-import Dashboard from "./src/screens/Dashboard/Dashboard";
 import DrawerComponent from "./src/components/DrawerComponent";
-import UpdateStatus from "./src/screens/Dashboard/UpdateStatus";
+import TaskDetails from "./src/screens/Dashboard/TaskDetails";
 
 export default function App() {
   const [resourcesLoaded, setResourcesLoaded] = useState(false);
@@ -186,7 +185,7 @@ export default function App() {
             ) : (
               <AuthStackComponent />
             )} */}
-            <UpdateStatus />
+            <TaskDetails />
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>
