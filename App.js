@@ -180,12 +180,11 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
           <StatusBar hidden={false} style="light" barStyle={"default"} />
           <NavigationContainer>
-            {/* {loginState.userToken ? (
+            {loginState.userToken ? (
               <DrawerComponent />
             ) : (
               <AuthStackComponent />
-            )} */}
-            <TaskDetails />
+            )}
           </NavigationContainer>
         </AuthContext.Provider>
       </PaperProvider>

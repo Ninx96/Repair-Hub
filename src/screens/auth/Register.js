@@ -142,6 +142,10 @@ const Register = (props) => {
                   validation[i] = "This field is required";
                   proceed = false;
                 }
+                if (params.password != params.confirm_password) {
+                  validation.confirm_password =
+                    "Confirm password should be same as password";
+                }
                 form_data.append(i, params[i]);
               }
               setError({ ...validation });

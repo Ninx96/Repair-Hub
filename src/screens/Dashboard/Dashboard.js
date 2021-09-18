@@ -43,10 +43,10 @@ const Dashboard = (props) => {
       }
       setError({ msg: "Could not connect to the server" });
     });
-  }, []);
+  }, [status]);
   return (
     <SafeAreaView style={(Style.container, { alignItems: "center" })}>
-      <Text style={Style.heading}>My Tasks</Text>
+      <Text style={Style.heading}>My Campaigns</Text>
 
       <FlatList
         style={{ width: "90%" }}
@@ -62,6 +62,7 @@ const Dashboard = (props) => {
           >
             <View style={{ flexDirection: "row", flex: 1 }}>
               <TouchableRipple
+                disabled={userType == "client"}
                 style={{
                   backgroundColor:
                     item.current_status_id == 1
@@ -81,7 +82,11 @@ const Dashboard = (props) => {
                       setLogs(res.data);
                     }
                   });
-                  setStatus({ task_id: item.id });
+                  setStatus({
+                    task_id: item.id,
+                    current_status_id: "",
+                    new_remarks: "",
+                  });
                 }}
               >
                 <View>
@@ -95,14 +100,17 @@ const Dashboard = (props) => {
                     {item.current_status_id == 1
                       ? "Pending"
                       : item.current_status_id == 2
-                      ? "Completed"
+                      ? "Verified"
                       : "Cancelled"}
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
+                disabled={userType == "client"}
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
-                onPress={() => {}}
+                onPress={() =>
+                  props.navigation.navigate("TaskDetails", { task_id: item.id })
+                }
               >
                 <View>
                   <Text style={{ fontSize: 28 }} numberOfLines={2}>
@@ -136,6 +144,9 @@ const Dashboard = (props) => {
             />
           </View>
           <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+            <Text style={[Style.heading, { marginBottom: 20 }]}>
+              Update Status
+            </Text>
             <View style={Style.form}>
               <View style={Style.formControl}>
                 <Text style={Style.label}>Select Status</Text>
@@ -148,12 +159,14 @@ const Dashboard = (props) => {
                       label: "Pending",
                       value: 1,
                     },
-                    { label: "Completed", value: 2 },
+                    { label: "Verified", value: 2 },
                     { label: "Cancelled", value: 3 },
                   ]}
+                  value={status?.current_status_id}
                   onChange={(val) => {
                     setStatus({ ...status, current_status_id: val });
                   }}
+                  error={error.current_status_id ? true : false}
                 />
                 {error.current_status_id ? (
                   <Text style={Style.textError}>
@@ -205,7 +218,25 @@ const Dashboard = (props) => {
                 style={Style.button}
                 uppercase={false}
                 labelStyle={Style.buttonLabel}
-                onPress={() => {}}
+                onPress={() => {
+                  var validation = {};
+                  var proceed = true;
+                  const form_data = new FormData();
+                  form_data.append("task_id", status.task_id);
+                  for (let i in status) {
+                    if (!status[i]) {
+                      validation[i] = "This field is required";
+                      proceed = false;
+                    }
+                    form_data.append(i, status[i]);
+                  }
+                  setError({ ...validation });
+                  if (proceed) {
+                    postRequest("task-status", form_data).then((res) =>
+                      setStatus(null)
+                    );
+                  }
+                }}
               >
                 Save
               </Button>

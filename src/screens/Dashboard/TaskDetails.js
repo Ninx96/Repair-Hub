@@ -1,19 +1,50 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Button, DataTable, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  DataTable,
+  IconButton,
+  Snackbar,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import DropDown from "../../components/DropDownComponent";
-import { postRequest } from "../../services/RequestServices";
+import MultipleImages from "../../components/MultipleImages";
+import { postRequest, taskImages } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const TaskDetails = (props) => {
+  const { task_id } = props.route.params;
   const { getSession, updateUser } = useContext(AuthContext);
   const { user, userType } = getSession();
+  const [showMessage, setShowMessage] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState({});
-  const [param, setParam] = useState({});
+  const [param, setParam] = useState({
+    id: task_id,
+    task_address: "",
+    task_mobile: "",
+    task_area_name: "",
+    task_city_name: "",
+    task_state_id: "",
+    task_pincode: "",
+    medium_id: "",
+    medium_type_id: "",
+    size_w: "",
+    size_h: "",
+    free_size: "",
+    nos: "",
+    total_area_in_sqft: "",
+    remarks: "",
+  });
+
+  //components
+
+  const [images, setImages] = useState([]);
 
   // utility
 
@@ -22,6 +53,20 @@ const TaskDetails = (props) => {
   const [mediumtype, setMediumtype] = useState([]);
 
   useEffect(() => {
+    const form_data = new FormData();
+    form_data.append("task_id", task_id);
+    postRequest("task-view", form_data).then((res) => {
+      if (res.s) {
+        const data = res.data;
+        for (let i in param) {
+          param[i] = data[i];
+        }
+        param.old_images = data.task_images;
+        setParam({ ...param });
+        images.push({ uri: taskImages + res.data.task_images });
+        setImages([...images]);
+      }
+    });
     postRequest("state-all-active").then((res) => {
       if (res.s) {
         setState(res.data);
@@ -41,12 +86,20 @@ const TaskDetails = (props) => {
 
   return (
     <SafeAreaView style={Style.container}>
+      <View style={{ flexDirection: "row", width: "100%" }}>
+        <IconButton
+          icon="chevron-left"
+          size={35}
+          onPress={() => props.navigation.goBack()}
+        />
+      </View>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <Text style={[Style.heading, { marginBottom: 20 }]}>Site Details</Text>
         <View style={Style.form}>
           <View style={Style.formControl}>
             <Text style={Style.label}>Address</Text>
             <TextInput
+              disabled={userType == "client"}
               multiline
               numberOfLines={2}
               mode="outlined"
@@ -65,6 +118,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Area</Text>
             <TextInput
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Enter Area"
               style={Style.input}
@@ -82,13 +136,16 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Pincode</Text>
             <TextInput
+              disabled={userType == "client"}
               keyboardType="number-pad"
               mode="outlined"
               placeholder="Enter Pincode"
               style={Style.input}
               maxLength={6}
               value={param?.task_pincode}
-              onChangeText={(text) => {}}
+              onChangeText={(text) =>
+                setParam({ ...param, task_pincode: text })
+              }
               error={error.task_pincode ? true : false}
             />
             {error.task_pincode ? (
@@ -99,6 +156,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>City</Text>
             <TextInput
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Enter City"
               style={Style.input}
@@ -106,7 +164,7 @@ const TaskDetails = (props) => {
               onChangeText={(text) =>
                 setParam({ ...param, task_city_name: text })
               }
-              error={error.param ? true : false}
+              error={error.task_city_name ? true : false}
             />
             {error.task_city_name ? (
               <Text style={Style.textError}>{error?.task_city_name}</Text>
@@ -116,6 +174,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>State</Text>
             <DropDown
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Select State"
               style={Style.input}
@@ -134,6 +193,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Contact Mobile</Text>
             <TextInput
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Enter Contact No."
               style={Style.input}
@@ -153,6 +213,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Medium</Text>
             <DropDown
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Select Medium"
               data={medium}
@@ -170,6 +231,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Medium Type</Text>
             <DropDown
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Select Medium Type"
               data={mediumtype}
@@ -191,6 +253,7 @@ const TaskDetails = (props) => {
             <View style={[Style.formControl, { width: "49%" }]}>
               <Text style={Style.label}>Size(W)</Text>
               <TextInput
+                disabled={userType == "client"}
                 keyboardType="number-pad"
                 mode="outlined"
                 placeholder="Enter Size(W)"
@@ -208,6 +271,7 @@ const TaskDetails = (props) => {
             <View style={[Style.formControl, { width: "49%" }]}>
               <Text style={Style.label}>Size(H)</Text>
               <TextInput
+                disabled={userType == "client"}
                 keyboardType="number-pad"
                 mode="outlined"
                 placeholder="Enter Size(H)"
@@ -225,6 +289,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Free Size</Text>
             <TextInput
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Enter Free Size"
               style={Style.input}
@@ -243,11 +308,12 @@ const TaskDetails = (props) => {
             <View style={[Style.formControl, { width: "49%" }]}>
               <Text style={Style.label}>NOS.</Text>
               <TextInput
+                disabled={userType == "client"}
                 keyboardType="number-pad"
                 mode="outlined"
                 placeholder="Enter NOS."
                 style={Style.input}
-                value={param?.nos}
+                value={String(param?.nos)}
                 onChangeText={(text) => setParam({ ...param, nos: text })}
                 error={error.nos ? true : false}
               />
@@ -259,6 +325,7 @@ const TaskDetails = (props) => {
             <View style={[Style.formControl, { width: "49%" }]}>
               <Text style={Style.label}>TOTAL SQ.FT.</Text>
               <TextInput
+                disabled={userType == "client"}
                 keyboardType="number-pad"
                 mode="outlined"
                 placeholder="Enter TOTAL SQ.FT."
@@ -278,14 +345,30 @@ const TaskDetails = (props) => {
 
         <View style={Style.form}>
           <Text style={[Style.heading, { marginBottom: 20 }]}>
+            Add More Site Images To Upload
+          </Text>
+          <MultipleImages
+            disabled={userType == "client"}
+            data={images}
+            onSelect={(filesArray) => {
+              setImages([...images, ...filesArray]);
+            }}
+            onClear={() => setImages([])}
+          />
+        </View>
+
+        <View style={Style.form}>
+          <Text style={[Style.heading, { marginBottom: 20 }]}>
             Any Information Or Remarks For Vendors
           </Text>
           <View style={Style.formControl}>
             <Text style={Style.label}>Remarks</Text>
             <TextInput
-              keyboardType="number-pad"
+              disabled={userType == "client"}
               mode="outlined"
               placeholder="Enter Remarks"
+              multiline
+              numberOfLines={3}
               style={Style.input}
               value={param?.remarks}
               onChangeText={(text) => setParam({ ...param, remarks: text })}
@@ -301,16 +384,55 @@ const TaskDetails = (props) => {
           </View>
 
           <Button
+            disabled={userType == "client"}
+            loading={loading}
             mode="contained"
             style={Style.button}
             uppercase={false}
             labelStyle={Style.buttonLabel}
-            onPress={() => {}}
+            onPress={() => {
+              setLoading(true);
+              var validation = {};
+              var proceed = true;
+              const form_data = new FormData();
+              for (let i in param) {
+                if (!param[i]) {
+                  validation[i] = "This field is required";
+                  proceed = false;
+                }
+                form_data.append(i, param[i]);
+              }
+              setError({ ...validation });
+              if (proceed) {
+                return postRequest("task-update", form_data).then((res) => {
+                  setLoading(false);
+
+                  if (res.s) {
+                    setShowMessage({
+                      msg: "Profile Updated Successfully..!",
+                    });
+                    setTimeout(() => props.navigation.goBack(), 500);
+                    return;
+                  }
+                  setError(res.error);
+                });
+              }
+              setLoading(false);
+            }}
           >
             Save
           </Button>
         </View>
       </ScrollView>
+      <Snackbar
+        visible={showMessage}
+        style={{ backgroundColor: "#5cb85c" }}
+        onDismiss={() => setShowMessage(null)}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>
+          {showMessage?.msg}
+        </Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };
