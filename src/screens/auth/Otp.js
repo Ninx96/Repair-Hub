@@ -9,6 +9,8 @@ const Otp = (props) => {
   const { signIn } = useContext(AuthContext);
   const { type, user } = props.route.params;
   const [param, setParam] = useState({ otp: "" });
+  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
   return (
     <SafeAreaView style={Style.container}>
       <View style={{ flexDirection: "row", width: "100%" }}>
@@ -36,11 +38,18 @@ const Otp = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>Enter OTP</Text>
             <TextInput
+              disabled={loading}
+              keyboardType="number-pad"
+              maxLength={6}
               mode="outlined"
               placeholder="Enter 6 Digit OTP"
               style={Style.input}
               onChangeText={(text) => setParam({ ...param, otp: text })}
+              error={error.otp ? true : false}
             />
+            {error.otp ? (
+              <Text style={Style.textError}>{error?.otp}</Text>
+            ) : null}
           </View>
           <View style={Style.formControl}>
             <View
@@ -67,14 +76,35 @@ const Otp = (props) => {
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
-              if (param.otp == "123456") {
-                return signIn({
-                  type: "LOGIN",
-                  userToken: user.id,
-                  userType: type,
-                  user: user,
+              setLoading(true);
+              if (param.otp) {
+                const form_data = new FormData();
+                if (type == "client") {
+                  form_data.append("client_id", user.id);
+                } else {
+                  form_data.append("vendor_id", user.id);
+                }
+                postRequest(
+                  type == "client"
+                    ? "client-otp-verification"
+                    : "vendor-otp-verification",
+                  form_data
+                ).then((res) => {
+                  setLoading(false);
+
+                  if (res.s) {
+                    return signIn({
+                      type: "LOGIN",
+                      userToken: user.id,
+                      userType: type,
+                      user: user,
+                    });
+                  }
+                  setError(res.error);
                 });
               }
+              setError({ otp: "Please enter 6 digit OTP" });
+              setLoading(false);
             }}
           >
             Continue
