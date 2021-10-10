@@ -51,8 +51,8 @@ export default function App() {
 
     colors: {
       ...PaperDefaultTheme.colors,
-      primary: "#4285F4",
-      accent: "#4285F4",
+      primary: "#282f80",
+      accent: "#fe5f5b",
     },
     fonts: configureFonts(fontConfig),
   };

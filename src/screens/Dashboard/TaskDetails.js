@@ -86,13 +86,6 @@ const TaskDetails = (props) => {
 
   return (
     <SafeAreaView style={Style.container}>
-      <View style={{ flexDirection: "row", width: "100%" }}>
-        <IconButton
-          icon="chevron-left"
-          size={35}
-          onPress={() => props.navigation.goBack()}
-        />
-      </View>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <Text style={[Style.heading, { marginBottom: 20 }]}>Site Details</Text>
         <View style={Style.form}>

@@ -70,7 +70,7 @@ const Otp = (props) => {
             </View>
           </View>
 
-          <Button
+          {/* <Button
             mode="contained"
             style={Style.button}
             uppercase={false}
@@ -105,6 +105,23 @@ const Otp = (props) => {
               }
               setError({ otp: "Please enter 6 digit OTP" });
               setLoading(false);
+            }}
+          >
+            Continue
+          </Button> */}
+
+          <Button
+            mode="contained"
+            style={Style.button}
+            uppercase={false}
+            labelStyle={Style.buttonLabel}
+            onPress={() => {
+              return signIn({
+                type: "LOGIN",
+                userToken: user.id,
+                userType: type,
+                user: user,
+              });
             }}
           >
             Continue

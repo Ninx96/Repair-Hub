@@ -115,7 +115,7 @@ const Profile = () => {
               mode="outlined"
               style={[
                 Style.button,
-                { borderWidth: 1.5, borderColor: "#4285F4" },
+                { borderWidth: 1.5, borderColor: "#282f80" },
               ]}
               uppercase={false}
               labelStyle={Style.buttonLabel}

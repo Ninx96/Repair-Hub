@@ -5,6 +5,9 @@ import Dashboard from "../screens/Dashboard/Dashboard";
 import Profile from "../screens/Profile";
 import ChangePassword from "../screens/ChangePassword";
 import TaskDetails from "../screens/Dashboard/TaskDetails";
+import Sites from "../screens/Dashboard/Sites";
+import { IconButton } from "react-native-paper";
+import { View } from "react-native";
 
 const DrawerComponent = (props) => {
   const Drawer = createDrawerNavigator();
@@ -18,9 +21,34 @@ const DrawerComponent = (props) => {
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen
+        name="Sites"
+        component={Sites}
+        options={{
+          header: () => (
+            <View style={{ flexDirection: "row", width: "100%" }}>
+              <IconButton
+                icon="chevron-left"
+                size={35}
+                onPress={() => props.navigation.goBack()}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="TaskDetails"
         component={TaskDetails}
-        options={{ headerShown: false }}
+        options={{
+          header: () => (
+            <View style={{ flexDirection: "row", width: "100%" }}>
+              <IconButton
+                icon="chevron-left"
+                size={35}
+                onPress={() => props.navigation.goBack()}
+              />
+            </View>
+          ),
+        }}
       />
     </Drawer.Navigator>
   );

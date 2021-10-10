@@ -8,7 +8,7 @@ const Style = StyleSheet.create({
   },
   heading: {
     fontSize: 40,
-    color: "#4285F4",
+    color: "#fe5f5b",
   },
   form: { width: "80%" },
   formControl: {
@@ -27,7 +27,8 @@ const Style = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 30,
-    marginTop: 15,
+    // marginTop: Platform.OS == "android" ? 15 : 8,
+    alignSelf: "center",
   },
   textBig: {
     fontSize: 30,

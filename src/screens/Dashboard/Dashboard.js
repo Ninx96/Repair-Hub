@@ -36,7 +36,7 @@ const Dashboard = (props) => {
     } else {
       form_data.append("vendor_id", user.id);
     }
-    postRequest("task-list", form_data).then((res) => {
+    postRequest("campaign-list", form_data).then((res) => {
       if (res.s) {
         setList(res.data.data);
         return;
@@ -46,11 +46,11 @@ const Dashboard = (props) => {
   }, [status]);
   return (
     <SafeAreaView style={(Style.container, { alignItems: "center" })}>
-      <Text style={Style.heading}>My Campaigns</Text>
-
       <FlatList
         style={{ width: "90%" }}
         data={list}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={<Text style={Style.heading}>My Campaigns</Text>}
         renderItem={({ item, index }) => (
           <Card
             style={{
@@ -68,7 +68,7 @@ const Dashboard = (props) => {
                     item.current_status_id == 1
                       ? "#f0ad4e"
                       : item.current_status_id == 2
-                      ? "#4285F4"
+                      ? "#282f80"
                       : "#d9534f",
                   width: "30%",
                   paddingLeft: 10,
@@ -91,10 +91,10 @@ const Dashboard = (props) => {
               >
                 <View>
                   <Text style={{ fontSize: 30, color: "#FFF" }}>
-                    {moment(item.created_at).format("DD MMM")}
+                    {moment(item?.created_at).format("DD MMM")}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
-                    {moment(item.created_at).format("LT")}
+                    {moment(item?.created_at).format("LT")}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#FFF" }}>
                     {item.current_status_id == 1
@@ -106,21 +106,22 @@ const Dashboard = (props) => {
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                disabled={userType == "client"}
+                disabled={userType != "client"}
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
                 onPress={() =>
-                  props.navigation.navigate("TaskDetails", { task_id: item.id })
+                  props.navigation.navigate("Sites", { campaign_id: item.id })
                 }
               >
                 <View>
                   <Text style={{ fontSize: 28 }} numberOfLines={2}>
-                    {item.medium.name || "N/A"}
+                    {item?.title || "N/A"}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#888" }}>
-                    {item.medium_type.name || "N/A"}
+                    {item?.client?.company_name || "N/A"}
                   </Text>
                   <Text style={{ fontSize: 20 }}>
-                    {item.task_city_name}, {item.state} - {item.pincode}
+                    {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
+                    {moment(item?.end_date).format("DD/MM/YYYY")}
                   </Text>
                 </View>
               </TouchableRipple>
