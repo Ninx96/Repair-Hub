@@ -34,7 +34,7 @@ const Login = (props) => {
         <View style={{ marginBottom: "20%" }}>
           <Image
             source={require("../../../assets/img/logo.png")}
-            style={{ height: 100, width: 150 }}
+            style={{ height: 100, width: 200 }}
           />
         </View>
 
@@ -74,6 +74,18 @@ const Login = (props) => {
             {error.password ? (
               <Text style={Style.textError}>{error?.password}</Text>
             ) : null}
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <Button
+              mode="text"
+              uppercase={false}
+              onPress={() =>
+                props.navigation.navigate("ForgotPassword", { type: type })
+              }
+            >
+              Forgot password ?
+            </Button>
           </View>
 
           <Button

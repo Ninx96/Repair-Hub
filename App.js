@@ -178,7 +178,7 @@ export default function App() {
     return (
       <PaperProvider theme={PaperTheme}>
         <AuthContext.Provider value={authContext}>
-          <StatusBar hidden={false} style="light" barStyle={"default"} />
+          <StatusBar hidden={false} style="dark" barStyle={"default"} />
           <NavigationContainer>
             {loginState.userToken ? (
               <DrawerComponent />

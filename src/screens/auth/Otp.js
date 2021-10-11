@@ -24,7 +24,7 @@ const Otp = (props) => {
         <View style={{ marginBottom: "20%" }}>
           <Image
             source={require("../../../assets/img/logo.png")}
-            style={{ height: 100, width: 150 }}
+            style={{ height: 100, width: 200 }}
           />
         </View>
         <View style={[Style.form, { marginBottom: 20 }]}>

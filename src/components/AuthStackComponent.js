@@ -5,6 +5,7 @@ import Login from "../screens/auth/Login";
 import Otp from "../screens/auth/Otp";
 import Register from "../screens/auth/Register";
 import UserType from "../screens/auth/UserType";
+import ForgotPassword from "../screens/auth/ForgotPassword";
 
 const AuthStackComponent = () => {
   const Stack = createStackNavigator();
@@ -18,6 +19,7 @@ const AuthStackComponent = () => {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Otp" component={Otp} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
     </Stack.Navigator>
   );
 };
