@@ -9,6 +9,8 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import * as Location from "expo-location";
+
 import { AuthContext } from "../../components/ContextComponent";
 import DropDown from "../../components/DropDownComponent";
 import MultipleImages from "../../components/MultipleImages";
@@ -16,7 +18,7 @@ import { postRequest, taskImages } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const TaskDetails = (props) => {
-  const { task_id } = props.route.params;
+  const { campaign_id } = props.route.params;
   const { getSession, updateUser } = useContext(AuthContext);
   const { user, userType } = getSession();
   const [showMessage, setShowMessage] = useState(null);
@@ -25,13 +27,11 @@ const TaskDetails = (props) => {
 
   const [error, setError] = useState({});
   const [param, setParam] = useState({
-    id: task_id,
-    task_address: "",
-    task_mobile: "",
-    task_area_name: "",
-    task_city_name: "",
-    task_state_id: "",
-    task_pincode: "",
+    campaign_id: campaign_id,
+    site_address: "",
+    site_area_name: "",
+    site_city_id: "",
+    site_state_id: "",
     medium_id: "",
     medium_type_id: "",
     size_w: "",
@@ -49,24 +49,37 @@ const TaskDetails = (props) => {
   // utility
 
   const [state, setState] = useState([]);
+  const [city, setCity] = useState([]);
   const [medium, setMedium] = useState([]);
   const [mediumtype, setMediumtype] = useState([]);
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    const form_data = new FormData();
-    form_data.append("task_id", task_id);
-    postRequest("task-view", form_data).then((res) => {
-      if (res.s) {
-        const data = res.data;
-        for (let i in param) {
-          param[i] = data[i];
-        }
-        param.old_images = data.task_images;
-        setParam({ ...param });
-        images.push({ uri: taskImages + res.data.task_images });
-        setImages([...images]);
+    // const form_data = new FormData();
+    // form_data.append("task_id", task_id);
+    // postRequest("task-view", form_data).then((res) => {
+    //   if (res.s) {
+    //     const data = res.data;
+    //     for (let i in param) {
+    //       param[i] = data[i];
+    //     }
+    //     param.old_images = data.task_images;
+    //     setParam({ ...param });
+    //     images.push({ uri: taskImages + res.data.task_images });
+    //     setImages([...images]);
+    //   }
+    // });
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
       }
-    });
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      console.log(location);
+    })();
     postRequest("state-all-active").then((res) => {
       if (res.s) {
         setState(res.data);
@@ -90,81 +103,6 @@ const TaskDetails = (props) => {
         <Text style={[Style.heading, { marginBottom: 20 }]}>Site Details</Text>
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Address</Text>
-            <TextInput
-              disabled={userType == "client"}
-              multiline
-              numberOfLines={2}
-              mode="outlined"
-              placeholder="Enter param"
-              style={Style.input}
-              value={param?.task_address}
-              onChangeText={(text) =>
-                setParam({ ...param, task_address: text })
-              }
-              error={error.task_address ? true : false}
-            />
-            {error.task_address ? (
-              <Text style={Style.textError}>{error?.task_address}</Text>
-            ) : null}
-          </View>
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Area</Text>
-            <TextInput
-              disabled={userType == "client"}
-              mode="outlined"
-              placeholder="Enter Area"
-              style={Style.input}
-              value={param?.task_area_name}
-              onChangeText={(text) =>
-                setParam({ ...param, task_area_name: text })
-              }
-              error={error.task_area_name ? true : false}
-            />
-            {error.task_area_name ? (
-              <Text style={Style.textError}>{error?.task_area_name}</Text>
-            ) : null}
-          </View>
-
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Pincode</Text>
-            <TextInput
-              disabled={userType == "client"}
-              keyboardType="number-pad"
-              mode="outlined"
-              placeholder="Enter Pincode"
-              style={Style.input}
-              maxLength={6}
-              value={param?.task_pincode}
-              onChangeText={(text) =>
-                setParam({ ...param, task_pincode: text })
-              }
-              error={error.task_pincode ? true : false}
-            />
-            {error.task_pincode ? (
-              <Text style={Style.textError}>{error?.task_pincode}</Text>
-            ) : null}
-          </View>
-
-          <View style={Style.formControl}>
-            <Text style={Style.label}>City</Text>
-            <TextInput
-              disabled={userType == "client"}
-              mode="outlined"
-              placeholder="Enter City"
-              style={Style.input}
-              value={param?.task_city_name}
-              onChangeText={(text) =>
-                setParam({ ...param, task_city_name: text })
-              }
-              error={error.task_city_name ? true : false}
-            />
-            {error.task_city_name ? (
-              <Text style={Style.textError}>{error?.task_city_name}</Text>
-            ) : null}
-          </View>
-
-          <View style={Style.formControl}>
             <Text style={Style.label}>State</Text>
             <DropDown
               disabled={userType == "client"}
@@ -174,28 +112,80 @@ const TaskDetails = (props) => {
               data={state}
               exLabel="state"
               exValue="id"
-              value={param?.task_state_id}
-              onChange={(text) => setParam({ ...param, task_state_id: text })}
-              error={error.task_state_id ? true : false}
+              value={param?.site_state_id}
+              onChange={(text) => {
+                setParam({ ...param, site_state_id: text });
+                const form_data = new FormData();
+                form_data.append("state_id", text);
+                postRequest("city-all-active").then((res) => {
+                  if (res.s) {
+                    setCity(res.data);
+                  }
+                });
+              }}
+              error={error.site_state_id ? true : false}
             />
             {error.task_state_id ? (
-              <Text style={Style.textError}>{error?.task_state_id}</Text>
+              <Text style={Style.textError}>{error?.site_state_id}</Text>
             ) : null}
           </View>
 
           <View style={Style.formControl}>
-            <Text style={Style.label}>Contact Mobile</Text>
+            <Text style={Style.label}>City</Text>
+            <DropDown
+              disabled={userType == "client"}
+              mode="outlined"
+              placeholder="Select State"
+              style={Style.input}
+              data={state}
+              exLabel="name"
+              exValue="id"
+              value={param?.site_city_id}
+              onChange={(text) => {
+                setParam({ ...param, site_city_id: text });
+              }}
+              error={error.site_city_id ? true : false}
+            />
+            {error.site_city_id ? (
+              <Text style={Style.textError}>{error?.site_city_id}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>District/Block</Text>
             <TextInput
               disabled={userType == "client"}
               mode="outlined"
-              placeholder="Enter Contact No."
+              placeholder="Address line"
               style={Style.input}
-              value={param?.task_mobile}
-              onChangeText={(text) => setParam({ ...param, task_mobile: text })}
-              error={error.task_mobile ? true : false}
+              value={param?.site_area_name}
+              onChangeText={(text) =>
+                setParam({ ...param, site_area_name: text })
+              }
+              error={error.site_area_name ? true : false}
             />
-            {error.task_mobile ? (
-              <Text style={Style.textError}>{error?.task_mobile}</Text>
+            {error.site_area_name ? (
+              <Text style={Style.textError}>{error?.site_area_name}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Exact Location</Text>
+            <TextInput
+              disabled={userType == "client"}
+              multiline
+              numberOfLines={2}
+              mode="outlined"
+              placeholder="Area name"
+              style={Style.input}
+              value={param?.site_address}
+              onChangeText={(text) =>
+                setParam({ ...param, site_address: text })
+              }
+              error={error.task_address ? true : false}
+            />
+            {error.site_address ? (
+              <Text style={Style.textError}>{error?.site_address}</Text>
             ) : null}
           </View>
         </View>
@@ -338,10 +328,9 @@ const TaskDetails = (props) => {
 
         <View style={Style.form}>
           <Text style={[Style.heading, { marginBottom: 20 }]}>
-            Add More Site Images To Upload
+            Site Images To Upload
           </Text>
           <MultipleImages
-            disabled={userType == "client"}
             data={images}
             onSelect={(filesArray) => {
               setImages([...images, ...filesArray]);
@@ -351,7 +340,7 @@ const TaskDetails = (props) => {
         </View>
 
         <View style={Style.form}>
-          <Text style={[Style.heading, { marginBottom: 20 }]}>
+          {/* <Text style={[Style.heading, { marginBottom: 20 }]}>
             Any Information Or Remarks For Vendors
           </Text>
           <View style={Style.formControl}>
@@ -374,7 +363,7 @@ const TaskDetails = (props) => {
                 MAXIMUM 250 CHARACTERS ALLOWED
               </Text>
             )}
-          </View>
+          </View> */}
 
           <Button
             disabled={userType == "client"}
@@ -388,6 +377,9 @@ const TaskDetails = (props) => {
               var validation = {};
               var proceed = true;
               const form_data = new FormData();
+              form_data.append("file", images);
+              form_data.append("latitude", location?.coords?.latitude);
+              form_data.append("longitude", location?.coords?.longitude);
               for (let i in param) {
                 if (!param[i]) {
                   validation[i] = "This field is required";
@@ -397,18 +389,20 @@ const TaskDetails = (props) => {
               }
               setError({ ...validation });
               if (proceed) {
-                return postRequest("task-update", form_data).then((res) => {
-                  setLoading(false);
+                return postRequest("campaign-site-create", form_data).then(
+                  (res) => {
+                    setLoading(false);
 
-                  if (res.s) {
-                    setShowMessage({
-                      msg: "Profile Updated Successfully..!",
-                    });
-                    setTimeout(() => props.navigation.goBack(), 500);
-                    return;
+                    if (res.s) {
+                      setShowMessage({
+                        msg: "Site Added Successfully..!",
+                      });
+                      setTimeout(() => props.navigation.goBack(), 500);
+                      return;
+                    }
+                    setError(res.error);
                   }
-                  setError(res.error);
-                });
+                );
               }
               setLoading(false);
             }}

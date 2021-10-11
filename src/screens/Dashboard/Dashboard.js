@@ -32,7 +32,7 @@ const Dashboard = (props) => {
   useEffect(() => {
     const form_data = new FormData();
     if (userType == "client") {
-      form_data.append("vendor_id", 1);
+      form_data.append("client_id", user.id);
     } else {
       form_data.append("vendor_id", user.id);
     }
@@ -62,7 +62,7 @@ const Dashboard = (props) => {
           >
             <View style={{ flexDirection: "row", flex: 1 }}>
               <TouchableRipple
-                disabled={userType == "client"}
+                disabled={true}
                 style={{
                   backgroundColor:
                     item.current_status_id == 1
