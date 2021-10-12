@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Image, SafeAreaView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  IconButton,
+  Snackbar,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
@@ -156,12 +162,16 @@ const Register = (props) => {
                 ).then((res) => {
                   setLoading(false);
                   if (res.s) {
+                    console.log(res);
                     return props.navigation.navigate("Otp", {
                       user: res.data,
                       type: type,
                     });
                   }
-                  setError(res.error);
+                  if (res.error) {
+                    setError(res.error);
+                  }
+                  setError({ msg: res.msg });
                 });
               }
               setLoading(false);
@@ -180,6 +190,13 @@ const Register = (props) => {
           </Button>
         </View>
       </ScrollView>
+      <Snackbar
+        visible={error.msg}
+        style={{ backgroundColor: "#d9534f" }}
+        onDismiss={() => setError({})}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };

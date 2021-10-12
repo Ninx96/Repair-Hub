@@ -58,12 +58,6 @@ const ForgotPassword = (props) => {
             ) : null}
           </View>
 
-          <View style={{ flexDirection: "row" }}>
-            <Button mode="text" uppercase={false}>
-              Forgot password ?
-            </Button>
-          </View>
-
           <Button
             disabled={loading}
             loading={loading}

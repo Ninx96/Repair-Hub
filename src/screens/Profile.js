@@ -19,13 +19,14 @@ const Profile = () => {
   const { user, userType } = getSession();
   const [param, setParam] = useState({
     id: user.id,
+    gst_no: "",
+    pan_no: "",
     company_name: user.company_name,
     name: user.name,
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(null);
-  const [showMessage, setShowMessage] = useState(null);
 
   return (
     <SafeAreaView style={Style.container}>
@@ -53,6 +54,50 @@ const Profile = () => {
                 {error?.company_name || error?.name}
               </Text>
             ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>GST Number</Text>
+            <TextInput
+              disabled={loading}
+              mode="outlined"
+              placeholder="GST Number"
+              style={Style.input}
+              value={param.gst_no}
+              onChangeText={(text) => setParam({ ...param, gst_no: text })}
+              error={error.gst_no ? true : false}
+            />
+            {error.gst_no ? (
+              <Text style={Style.textError}>{error?.gst_no}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>PAN Number</Text>
+            <TextInput
+              disabled={loading}
+              mode="outlined"
+              placeholder="Enter Full Name"
+              style={Style.input}
+              value={param.pan_no}
+              onChangeText={(text) => setParam({ ...param, pan_no: text })}
+              error={error.pan_no ? true : false}
+            />
+            {error.pan_no ? (
+              <Text style={Style.textError}>{error?.pan_no}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Phone Number</Text>
+            <TextInput
+              disabled
+              mode="outlined"
+              placeholder="Enter Phone Number"
+              style={Style.input}
+              value={user.mobile}
+              onChangeText={(text) => setParam({ ...param, mobile: text })}
+            />
           </View>
 
           <View style={Style.formControl}>
@@ -173,12 +218,15 @@ const Profile = () => {
                       state_id: param.state_id,
                       pincode: param.pincode,
                     });
-                    setShowMessage({
+                    setError({
                       msg: "Profile Updated Successfully..!",
                     });
                     return;
                   }
-                  setError(res.error);
+                  if (res.error) {
+                    setError(res.error);
+                  }
+                  setError({ msg: res.msg });
                 });
               }
               setLoading(false);
@@ -329,13 +377,11 @@ const Profile = () => {
         </Modal>
       </Portal>
       <Snackbar
-        visible={showMessage}
+        visible={error.msg}
         style={{ backgroundColor: "#5cb85c" }}
-        onDismiss={() => setShowMessage(null)}
+        onDismiss={() => setError({})}
       >
-        <Text style={[Style.textRegular, { color: "#FFF" }]}>
-          {showMessage?.msg}
-        </Text>
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
       </Snackbar>
     </SafeAreaView>
   );

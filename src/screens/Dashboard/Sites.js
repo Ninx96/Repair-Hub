@@ -58,6 +58,9 @@ const Sites = (props) => {
               borderColor: "#000",
               marginVertical: 10,
             }}
+            onPress={() =>
+              props.navigation.navigate("TaskDetails", { siteDetails: item })
+            }
           >
             <View style={{ flexDirection: "row", flex: 1 }}>
               <View
@@ -105,14 +108,6 @@ const Sites = (props) => {
           </Card>
         )}
         keyExtractor={(item, index) => index.toString()}
-      />
-      <FAB
-        style={{ position: "absolute", right: 20, bottom: 20 }}
-        icon="plus"
-        color="#000"
-        onPress={() =>
-          props.navigation.navigate("TaskDetails", { campaign_id: campaign_id })
-        }
       />
     </SafeAreaView>
   );

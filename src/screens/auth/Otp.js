@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  IconButton,
+  Snackbar,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
@@ -70,20 +76,21 @@ const Otp = (props) => {
             </View>
           </View>
 
-          {/* <Button
+          <Button
             mode="contained"
             style={Style.button}
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
               setLoading(true);
-              if (param.otp) {
+              if (param.otp.length == 6) {
                 const form_data = new FormData();
                 if (type == "client") {
                   form_data.append("client_id", user.id);
                 } else {
                   form_data.append("vendor_id", user.id);
                 }
+                form_data.append("otp", param.otp);
                 postRequest(
                   type == "client"
                     ? "client-otp-verification"
@@ -91,7 +98,7 @@ const Otp = (props) => {
                   form_data
                 ).then((res) => {
                   setLoading(false);
-
+                  console.log(res);
                   if (res.s) {
                     return signIn({
                       type: "LOGIN",
@@ -100,7 +107,10 @@ const Otp = (props) => {
                       user: user,
                     });
                   }
-                  setError(res.error);
+                  if (res.error) {
+                    setError(res.error);
+                  }
+                  setError({ msg: res.msg });
                 });
               }
               setError({ otp: "Please enter 6 digit OTP" });
@@ -108,26 +118,16 @@ const Otp = (props) => {
             }}
           >
             Continue
-          </Button> */}
-
-          <Button
-            mode="contained"
-            style={Style.button}
-            uppercase={false}
-            labelStyle={Style.buttonLabel}
-            onPress={() => {
-              return signIn({
-                type: "LOGIN",
-                userToken: user.id,
-                userType: type,
-                user: user,
-              });
-            }}
-          >
-            Continue
           </Button>
         </View>
       </ScrollView>
+      <Snackbar
+        visible={error.msg}
+        style={{ backgroundColor: "#d9534f" }}
+        onDismiss={() => setError({})}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };

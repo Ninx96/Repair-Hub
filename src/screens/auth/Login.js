@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Image, SafeAreaView, View, ScrollView } from "react-native";
 import {
   Button,
@@ -7,11 +7,13 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import { AuthContext } from "../../components/ContextComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Login = (props) => {
   const { type } = props.route.params;
+  const { signIn } = useContext(AuthContext);
   const [secureText, setSecureText] = useState(true);
   const [params, setParams] = useState({
     email: "",
@@ -79,6 +81,7 @@ const Login = (props) => {
           <View style={{ flexDirection: "row" }}>
             <Button
               mode="text"
+              labelStyle={{ fontSize: 25 }}
               uppercase={false}
               onPress={() =>
                 props.navigation.navigate("ForgotPassword", { type: type })
@@ -116,13 +119,17 @@ const Login = (props) => {
                   console.log(res);
                   setLoading(false);
                   if (res.s) {
-                    return props.navigation.navigate("Otp", {
+                    return signIn({
+                      type: "LOGIN",
+                      userToken: res.data.id,
+                      userType: type,
                       user: res.data,
-                      type: type,
                     });
                   }
-
-                  setError(res.error);
+                  if (res.error) {
+                    return setError(res.error);
+                  }
+                  setError({ msg: res.msg });
                 });
               }
               setLoading(false);
@@ -148,6 +155,13 @@ const Login = (props) => {
           </Button>
         </View>
       </ScrollView>
+      <Snackbar
+        visible={error.msg}
+        style={{ backgroundColor: "#d9534f" }}
+        onDismiss={() => setError({})}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };

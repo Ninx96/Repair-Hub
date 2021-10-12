@@ -8,8 +8,10 @@ import TaskDetails from "../screens/Dashboard/TaskDetails";
 import Sites from "../screens/Dashboard/Sites";
 import { IconButton } from "react-native-paper";
 import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const DrawerComponent = (props) => {
+  const navigation = useNavigation();
   const Drawer = createDrawerNavigator();
   return (
     <Drawer.Navigator
@@ -24,14 +26,12 @@ const DrawerComponent = (props) => {
         name="Sites"
         component={Sites}
         options={{
-          header: () => (
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <IconButton
-                icon="chevron-left"
-                size={35}
-                onPress={() => props.navigation.goBack()}
-              />
-            </View>
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-left"
+              size={35}
+              onPress={() => navigation.goBack()}
+            />
           ),
         }}
       />
@@ -39,14 +39,12 @@ const DrawerComponent = (props) => {
         name="TaskDetails"
         component={TaskDetails}
         options={{
-          header: () => (
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <IconButton
-                icon="chevron-left"
-                size={35}
-                onPress={() => props.navigation.goBack()}
-              />
-            </View>
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-left"
+              size={35}
+              onPress={() => navigation.goBack()}
+            />
           ),
         }}
       />

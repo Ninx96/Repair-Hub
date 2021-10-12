@@ -1,5 +1,5 @@
 const URL = "https://media.brandscoot.com/api/v1/";
-export const taskImages = "https://media.brandscoot.com/uploads/tasks/";
+export const taskImages = "https://media.brandscoot.com/uploads/sites/";
 
 export const postRequest = (path, body, header) => {
   return fetch(URL + path, {
