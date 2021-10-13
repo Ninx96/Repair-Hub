@@ -13,10 +13,24 @@ import Style from "../../styles/Style";
 
 const Otp = (props) => {
   const { signIn } = useContext(AuthContext);
-  const { type, user } = props.route.params;
+  const { type, user, isForget } = props.route.params;
   const [param, setParam] = useState({ otp: "" });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(30);
+  useEffect(() => {
+    const ticket = setTimeout(() => {
+      const counter = timer;
+      if (counter) {
+        setTimer(counter - 1);
+        return;
+      }
+      clearTimeout(ticket);
+    }, 1000);
+    return () => {
+      clearTimeout(ticket);
+    };
+  }, [timer]);
   return (
     <SafeAreaView style={Style.container}>
       <View style={{ flexDirection: "row", width: "100%" }}>
@@ -65,8 +79,9 @@ const Otp = (props) => {
                 alignItems: "center",
               }}
             >
-              <Text style={{ fontSize: 25 }}>0:23</Text>
+              <Text style={{ fontSize: 25 }}>0:{timer}</Text>
               <Button
+                disabled={timer}
                 mode="text"
                 uppercase={false}
                 labelStyle={{ fontSize: 25 }}
@@ -100,6 +115,12 @@ const Otp = (props) => {
                   setLoading(false);
                   console.log(res);
                   if (res.s) {
+                    if (isForget) {
+                      return props.navigation.navigate("ResetPassword", {
+                        user,
+                        type,
+                      });
+                    }
                     return signIn({
                       type: "LOGIN",
                       userToken: user.id,
@@ -108,12 +129,13 @@ const Otp = (props) => {
                     });
                   }
                   if (res.error) {
-                    setError(res.error);
+                    return setError(res.error);
                   }
                   setError({ msg: res.msg });
                 });
+              } else {
+                setError({ otp: "Please enter 6 digit OTP" });
               }
-              setError({ otp: "Please enter 6 digit OTP" });
               setLoading(false);
             }}
           >

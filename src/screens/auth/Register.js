@@ -166,10 +166,11 @@ const Register = (props) => {
                     return props.navigation.navigate("Otp", {
                       user: res.data,
                       type: type,
+                      isForget: false,
                     });
                   }
                   if (res.error) {
-                    setError(res.error);
+                    return setError(res.error);
                   }
                   setError({ msg: res.msg });
                 });

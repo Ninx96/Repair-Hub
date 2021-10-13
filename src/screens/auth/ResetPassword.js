@@ -10,11 +10,12 @@ import {
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
-const ForgotPassword = (props) => {
-  const { type } = props.route.params;
-  const [secureText, setSecureText] = useState(true);
+const ResetPassword = (props) => {
+  const { type, user } = props.route.params;
   const [params, setParams] = useState({
-    mobile: "",
+    new_password: "",
+    is_forgot: 1,
+    confirm_password: "",
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -38,22 +39,42 @@ const ForgotPassword = (props) => {
         </View>
 
         <Text style={[Style.heading, { marginBottom: "10%" }]}>
-          Forgot Password
+          Reset Password
         </Text>
 
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Enter Phone Number</Text>
+            <Text style={Style.label}>Enter New Password</Text>
             <TextInput
+              secureTextEntry
               disabled={loading}
-              error={error.mobile ? true : false}
+              error={error.new_password ? true : false}
               mode="outlined"
-              placeholder="Enter Phone"
+              placeholder="Enter Password"
               style={Style.input}
-              onChangeText={(text) => setParams({ ...params, mobile: text })}
+              onChangeText={(text) =>
+                setParams({ ...params, new_password: text })
+              }
             />
             {error.mobile ? (
               <Text style={Style.textError}>{error?.mobile}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Re-enter New Password</Text>
+            <TextInput
+              disabled={loading}
+              error={error.confirm_password ? true : false}
+              mode="outlined"
+              placeholder="Re-enter Password"
+              style={Style.input}
+              onChangeText={(text) =>
+                setParams({ ...params, confirm_password: text })
+              }
+            />
+            {error.confirm_password ? (
+              <Text style={Style.textError}>{error?.confirm_password}</Text>
             ) : null}
           </View>
 
@@ -67,6 +88,11 @@ const ForgotPassword = (props) => {
             onPress={() => {
               setLoading(true);
               const form_data = new FormData();
+              if (type == "client") {
+                form_data.append("client_id", user.id);
+              } else {
+                form_data.append("vendor_id", user.id);
+              }
               var proceed = true;
               var validation = {};
               for (let i in params) {
@@ -76,22 +102,21 @@ const ForgotPassword = (props) => {
                 }
                 form_data.append(i, params[i]);
               }
+              if (params.new_password !== params.confirm_password) {
+                validation[confirm_password] = "should be same as new password";
+              }
               setError({ ...validation });
               if (proceed) {
                 return postRequest(
                   type == "client"
-                    ? "client-forgot-password"
-                    : "vendor-forgot-password",
+                    ? "client-reset-password"
+                    : "vendor-reset-password",
                   form_data
                 ).then((res) => {
                   console.log(res);
                   setLoading(false);
                   if (res.s) {
-                    return props.navigation.navigate("Otp", {
-                      user: res.data,
-                      type: type,
-                      isForget: true,
-                    });
+                    return props.navigation.navigate("Login", { type });
                   }
                   if (res.error) {
                     return setError(res.error);
@@ -126,4 +151,4 @@ const ForgotPassword = (props) => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

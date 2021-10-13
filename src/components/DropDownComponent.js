@@ -120,6 +120,7 @@ const DropDown = ({
               marginLeft: left ? 35 : 0,
             }}
             onValueChange={onChange}
+            enabled={!disabled}
           >
             <Picker.Item label={placeholder} value="" />
             {data.map((item, index) => (
@@ -132,7 +133,7 @@ const DropDown = ({
           </Picker>
         )
       }
-      right={<TextInput.Icon name="chevron-down" />}
+      right={<TextInput.Icon name="chevron-down" disabled={disabled} />}
       left={left}
     />
   );

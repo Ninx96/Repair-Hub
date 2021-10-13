@@ -27,20 +27,19 @@ const TaskDetails = (props) => {
 
   const [error, setError] = useState({});
   const [param, setParam] = useState({
-    campaign_id: "",
-    site_address: "",
-    site_area_name: "",
-    site_city_id: "",
-    site_state_id: "",
-    medium_id: "",
-    medium_type_id: "",
-    size_w: "",
-    size_h: "",
-    free_size: "",
-    nos: "",
-    total_area_in_sqft: "",
+    campaign_id: siteDetails?.id,
+    site_address: siteDetails?.site_address,
+    site_area_name: siteDetails?.site_area_name,
+    site_city_id: siteDetails?.site_city_id,
+    site_state_id: siteDetails?.site_state_id,
+    medium_id: siteDetails?.medium?.id,
+    medium_type_id: siteDetails?.medium_type?.id,
+    size_w: siteDetails?.size_w,
+    size_h: siteDetails?.size_h,
+    free_size: siteDetails?.free_size,
+    nos: siteDetails?.nos,
+    total_area_in_sqft: siteDetails?.total_area_in_sqft,
     remarks: "",
-    ...siteDetails,
   });
 
   //components
@@ -58,18 +57,21 @@ const TaskDetails = (props) => {
   useEffect(() => {
     const imgs = siteDetails.site_images.split(",");
     imgs.forEach((img) => {
-      images.push({ uri: taskImages + img });
+      images.push({ name: img, type: "image/jpg", uri: taskImages + img });
     });
     setImages([...images]);
 
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        setError({ msg: "Permission to access location was denied" });
         return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
+      if (!location) {
+        props.navigation.goBack();
+      }
       setLocation(location);
     })();
     postRequest("state-all-active").then((res) => {
@@ -377,22 +379,25 @@ const TaskDetails = (props) => {
               var validation = {};
               var proceed = true;
               const form_data = new FormData();
-              form_data.append("file", images);
               form_data.append("latitude", location?.coords?.latitude);
               form_data.append("longitude", location?.coords?.longitude);
+              images.forEach((img, idx) => {
+                form_data.append(`file[${idx}]`, img);
+              });
               for (let i in param) {
-                if (!param[i]) {
-                  validation[i] = "This field is required";
-                  proceed = false;
-                }
+                // if (!param[i]) {
+                //   validation[i] = "This field is required";
+                //   proceed = false;
+                // }
                 form_data.append(i, param[i]);
               }
               setError({ ...validation });
               if (proceed) {
                 return postRequest("campaign-site-create", form_data).then(
                   (res) => {
+                    console.log(form_data);
+                    console.log(res);
                     setLoading(false);
-
                     if (res.s) {
                       setError({
                         msg: "Site Added Successfully..!",
@@ -401,7 +406,7 @@ const TaskDetails = (props) => {
                       return;
                     }
                     if (res.error) {
-                      setError(res.error);
+                      return setError(res.error);
                     }
                   }
                 );

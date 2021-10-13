@@ -18,12 +18,13 @@ import {
 import RenderHtml from "react-native-render-html";
 
 import { AuthContext } from "../../components/ContextComponent";
+import DatePicker from "../../components/DatePicker";
 import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Sites = (props) => {
-  const { campaign_id } = props.route.params;
+  const { campaign_id, start_date, end_date } = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -49,7 +50,26 @@ const Sites = (props) => {
         style={{ width: "90%" }}
         data={list}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<Text style={Style.heading}>My Sites</Text>}
+        ListHeaderComponent={
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={Style.heading}>My Sites</Text>
+            <Button
+              mode="text"
+              labelStyle={{ fontSize: 25 }}
+              onPress={() =>
+                setStatus({
+                  start_date: start_date,
+                  end_date: end_date,
+                  campaign_id: campaign_id,
+                })
+              }
+            >
+              Edit
+            </Button>
+          </View>
+        }
         renderItem={({ item, index }) => (
           <Card
             style={{
@@ -109,6 +129,91 @@ const Sites = (props) => {
         )}
         keyExtractor={(item, index) => index.toString()}
       />
+      <Portal>
+        <Modal
+          visible={status}
+          dismissable={false}
+          contentContainerStyle={[Style.container, { paddingTop: 0 }]}
+        >
+          <View style={{ flexDirection: "row", width: "100%" }}>
+            <IconButton
+              icon="chevron-left"
+              size={35}
+              onPress={() => setStatus(null)}
+            />
+          </View>
+          <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+            <Text style={[Style.heading, { marginBottom: 20 }]}>
+              Update End-Date
+            </Text>
+            <View style={Style.form}>
+              <View style={Style.formControl}>
+                <Text style={Style.label}>Start Date</Text>
+                <TextInput
+                  disabled
+                  mode="outlined"
+                  style={Style.input}
+                  value={moment(status?.start_date).format("DD/MM/YYYY")}
+                />
+              </View>
+              <View style={Style.formControl}>
+                <Text style={Style.label}>End Date</Text>
+                <DatePicker
+                  value={status?.end_date}
+                  onValueChange={(date) =>
+                    setStatus({ ...status, end_date: date })
+                  }
+                  inputStyles={Style.input}
+                />
+                {error.new_remarks ? (
+                  <Text style={Style.textError}>{error?.new_remarks}</Text>
+                ) : null}
+              </View>
+
+              <Button
+                mode="contained"
+                style={Style.button}
+                uppercase={false}
+                labelStyle={Style.buttonLabel}
+                onPress={() => {
+                  var validation = {};
+                  var proceed = true;
+                  const form_data = new FormData();
+                  form_data.append("id", 1);
+                  for (let i in status) {
+                    if (!status[i]) {
+                      validation[i] = "This field is required";
+                      proceed = false;
+                    }
+                    form_data.append(i, status[i]);
+                  }
+                  setError({ ...validation });
+                  if (proceed) {
+                    postRequest("campaign-update", form_data).then((res) => {
+                      if (res.s) {
+                        setStatus(null);
+                      }
+                      if (res.error) {
+                        return setError(res.error);
+                      }
+                      setError({ msg: res.msg });
+                    });
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </View>
+          </ScrollView>
+        </Modal>
+      </Portal>
+      <Snackbar
+        visible={error.msg}
+        style={{ backgroundColor: "#5cb85c" }}
+        onDismiss={() => setError({})}
+      >
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
+      </Snackbar>
     </SafeAreaView>
   );
 };

@@ -106,10 +106,13 @@ const Dashboard = (props) => {
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                disabled={userType != "client"}
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
                 onPress={() =>
-                  props.navigation.navigate("Sites", { campaign_id: item.id })
+                  props.navigation.navigate("Sites", {
+                    campaign_id: item.id,
+                    start_date: item?.start_date,
+                    end_date: item?.end_date,
+                  })
                 }
               >
                 <View>

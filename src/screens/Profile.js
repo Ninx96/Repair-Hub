@@ -19,10 +19,16 @@ const Profile = () => {
   const { user, userType } = getSession();
   const [param, setParam] = useState({
     id: user.id,
-    gst_no: "",
-    pan_no: "",
+    gst_no: user.gst_no,
+    pan_no: user.pan_no,
     company_name: user.company_name,
     name: user.name,
+    address: user.address,
+    area_name: user.area_name,
+    city_name: user.city_name,
+    state: user.state,
+    pincode: user.pincode,
+    state_id: user.state_id,
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -77,7 +83,7 @@ const Profile = () => {
             <TextInput
               disabled={loading}
               mode="outlined"
-              placeholder="Enter Full Name"
+              placeholder="Enter PAN"
               style={Style.input}
               value={param.pan_no}
               onChangeText={(text) => setParam({ ...param, pan_no: text })}
@@ -86,18 +92,6 @@ const Profile = () => {
             {error.pan_no ? (
               <Text style={Style.textError}>{error?.pan_no}</Text>
             ) : null}
-          </View>
-
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Phone Number</Text>
-            <TextInput
-              disabled
-              mode="outlined"
-              placeholder="Enter Phone Number"
-              style={Style.input}
-              value={user.mobile}
-              onChangeText={(text) => setParam({ ...param, mobile: text })}
-            />
           </View>
 
           <View style={Style.formControl}>
@@ -217,6 +211,8 @@ const Profile = () => {
                       city_name: param.city_name,
                       state_id: param.state_id,
                       pincode: param.pincode,
+                      pan_no: param.pan_no,
+                      gst_no: param.gst_no,
                     });
                     setError({
                       msg: "Profile Updated Successfully..!",
@@ -224,7 +220,7 @@ const Profile = () => {
                     return;
                   }
                   if (res.error) {
-                    setError(res.error);
+                    return setError(res.error);
                   }
                   setError({ msg: res.msg });
                 });

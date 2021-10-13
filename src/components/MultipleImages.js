@@ -25,7 +25,13 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
       <Text style={{ flexGrow: 1, fontWeight: "bold", fontSize: 18 }}>
         Selected {count} files
       </Text>,
-      <Button mode="text" color="blue" uppercase={false} onPress={onSubmit}>
+      <Button
+        mode="text"
+        color="blue"
+        uppercase={false}
+        onPress={onSubmit}
+        labelStyle={{ fontSize: 25 }}
+      >
         Done
       </Button>,
     ];
