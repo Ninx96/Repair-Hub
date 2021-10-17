@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Image, View, FlatList } from "react-native";
 import { ImageBrowser } from "expo-image-picker-multiple";
 import * as ImageManipulator from "expo-image-manipulator";
-import { Button, IconButton, Modal, Portal, Text } from "react-native-paper";
+import {
+  Button,
+  IconButton,
+  Modal,
+  Portal,
+  Text,
+  TouchableRipple,
+} from "react-native-paper";
 import Style from "../styles/Style";
 
 const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
@@ -13,6 +20,7 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
     </Text>
   );
   const [modal, setModal] = useState(false);
+  const [modalImage, setmodalImage] = useState(false);
 
   const _renderDoneButton = (count, onSubmit) => {
     if (!count)
@@ -51,10 +59,12 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
       <FlatList
         data={data}
         renderItem={({ item, index }) => (
-          <Image
-            source={{ uri: item.uri }}
-            style={{ height: 100, width: 100, marginHorizontal: 5 }}
-          />
+          <TouchableRipple onPress={() => setmodalImage({ uri: item.uri })}>
+            <Image
+              source={{ uri: item.uri }}
+              style={{ height: 100, width: 100, marginHorizontal: 5 }}
+            />
+          </TouchableRipple>
         )}
         horizontal
         keyExtractor={(item, index) => index.toString()}
@@ -141,6 +151,37 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
               }}
             />
           </View>
+        </Modal>
+      </Portal>
+
+      <Portal>
+        <Modal
+          visible={modalImage}
+          dismissable={false}
+          transparent={true}
+          contentContainerStyle={{
+            backgroundColor: "rgba(0,0,0,0.7)",
+            height: "100%",
+          }}
+          onDismiss={() => {
+            setmodalImage(false);
+          }}
+        >
+          <IconButton
+            icon="close"
+            size={30}
+            color="#fff"
+            style={{ alignSelf: "flex-end" }}
+            onPress={() => setmodalImage(false)}
+          />
+          <Image
+            source={modalImage}
+            style={{
+              width: "100%",
+              height: "80%",
+              resizeMode: "contain",
+            }}
+          />
         </Modal>
       </Portal>
     </View>

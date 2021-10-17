@@ -42,7 +42,7 @@ const Login = (props) => {
 
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Enter Phone/Email</Text>
+            <Text style={Style.label}>Enter Phone</Text>
             <TextInput
               disabled={loading}
               error={error.email ? true : false}

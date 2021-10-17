@@ -187,13 +187,13 @@ const Profile = () => {
               var proceed = true;
               var validation = {};
               for (let i in param) {
-                if (!param[i]) {
-                  validation[i] = "This field is required";
-                  proceed = false;
-                }
+                // if (!param[i]) {
+                //   validation[i] = "This field is required";
+                //   proceed = false;
+                // }
                 form_data.append(i, param[i]);
               }
-              setError({ ...validation });
+              // setError({ ...validation });
               if (proceed) {
                 return postRequest(
                   userType == "client"

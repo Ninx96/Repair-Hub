@@ -61,19 +61,22 @@ const TaskDetails = (props) => {
     });
     setImages([...images]);
 
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setError({ msg: "Permission to access location was denied" });
-        return;
-      }
+    if (userType != "client") {
+      (async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setError({ msg: "Permission to access location was denied" });
+          return;
+        }
 
-      let location = await Location.getCurrentPositionAsync({});
-      if (!location) {
-        props.navigation.goBack();
-      }
-      setLocation(location);
-    })();
+        let location = await Location.getCurrentPositionAsync({});
+        if (!location) {
+          props.navigation.goBack();
+        }
+        setLocation(location);
+      })();
+    }
+
     postRequest("state-all-active").then((res) => {
       if (res.s) {
         setState(res.data);
@@ -243,7 +246,7 @@ const TaskDetails = (props) => {
                 placeholder="Enter Size(W)"
                 style={[Style.input]}
                 maxLength={6}
-                value={param?.size_w}
+                value={param?.size_w.toString()}
                 onChangeText={(text) => {}}
                 error={error.size_w ? true : false}
               />
@@ -260,7 +263,7 @@ const TaskDetails = (props) => {
                 mode="outlined"
                 placeholder="Enter Size(H)"
                 style={Style.input}
-                value={param?.size_h}
+                value={param?.size_h.toString()}
                 onChangeText={(text) => setParam({ ...param, size_h: text })}
                 error={error.size_h ? true : false}
               />

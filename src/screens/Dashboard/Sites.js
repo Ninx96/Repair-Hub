@@ -56,6 +56,7 @@ const Sites = (props) => {
           >
             <Text style={Style.heading}>My Sites</Text>
             <Button
+              disabled={userType == "client"}
               mode="text"
               labelStyle={{ fontSize: 25 }}
               onPress={() =>
@@ -66,7 +67,7 @@ const Sites = (props) => {
                 })
               }
             >
-              Edit
+              Edit End Date
             </Button>
           </View>
         }
@@ -192,6 +193,7 @@ const Sites = (props) => {
                     postRequest("campaign-update", form_data).then((res) => {
                       if (res.s) {
                         setStatus(null);
+                        return setTimeout(() => props.navigation.goBack(), 500);
                       }
                       if (res.error) {
                         return setError(res.error);
