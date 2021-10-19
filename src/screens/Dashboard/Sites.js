@@ -55,20 +55,21 @@ const Sites = (props) => {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text style={Style.heading}>My Sites</Text>
-            <Button
-              disabled={userType == "client"}
-              mode="text"
-              labelStyle={{ fontSize: 25 }}
-              onPress={() =>
-                setStatus({
-                  start_date: start_date,
-                  end_date: end_date,
-                  campaign_id: campaign_id,
-                })
-              }
-            >
-              Edit End Date
-            </Button>
+            {userType != "client" && (
+              <Button
+                mode="text"
+                labelStyle={{ fontSize: 25 }}
+                onPress={() =>
+                  setStatus({
+                    start_date: start_date,
+                    end_date: end_date,
+                    campaign_id: campaign_id,
+                  })
+                }
+              >
+                Edit End Date
+              </Button>
+            )}
           </View>
         }
         renderItem={({ item, index }) => (

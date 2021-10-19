@@ -331,9 +331,11 @@ const TaskDetails = (props) => {
         </View>
 
         <View style={Style.form}>
-          <Text style={[Style.heading, { marginBottom: 20 }]}>
-            Site Images To Upload
-          </Text>
+          {userType != "client" && (
+            <Text style={[Style.heading, { marginBottom: 20 }]}>
+              Site Images To Upload
+            </Text>
+          )}
           <MultipleImages
             disabled={userType == "client"}
             data={images}
@@ -370,55 +372,57 @@ const TaskDetails = (props) => {
             )}
           </View> */}
 
-          <Button
-            disabled={userType == "client" || !location}
-            loading={loading}
-            mode="contained"
-            style={Style.button}
-            uppercase={false}
-            labelStyle={Style.buttonLabel}
-            onPress={() => {
-              setLoading(true);
-              var validation = {};
-              var proceed = true;
-              const form_data = new FormData();
-              form_data.append("latitude", location?.coords?.latitude);
-              form_data.append("longitude", location?.coords?.longitude);
-              images.forEach((img, idx) => {
-                form_data.append(`file[${idx}]`, img);
-              });
-              for (let i in param) {
-                // if (!param[i]) {
-                //   validation[i] = "This field is required";
-                //   proceed = false;
-                // }
-                form_data.append(i, param[i]);
-              }
-              setError({ ...validation });
-              if (proceed) {
-                return postRequest("campaign-site-create", form_data).then(
-                  (res) => {
-                    console.log(form_data);
-                    console.log(res);
-                    setLoading(false);
-                    if (res.s) {
-                      setError({
-                        msg: "Site Added Successfully..!",
-                      });
-                      setTimeout(() => props.navigation.goBack(), 500);
-                      return;
+          {userType != "client" && (
+            <Button
+              disabled={!location}
+              loading={loading}
+              mode="contained"
+              style={Style.button}
+              uppercase={false}
+              labelStyle={Style.buttonLabel}
+              onPress={() => {
+                setLoading(true);
+                var validation = {};
+                var proceed = true;
+                const form_data = new FormData();
+                form_data.append("latitude", location?.coords?.latitude);
+                form_data.append("longitude", location?.coords?.longitude);
+                images.forEach((img, idx) => {
+                  form_data.append(`file[${idx}]`, img);
+                });
+                for (let i in param) {
+                  // if (!param[i]) {
+                  //   validation[i] = "This field is required";
+                  //   proceed = false;
+                  // }
+                  form_data.append(i, param[i]);
+                }
+                setError({ ...validation });
+                if (proceed) {
+                  return postRequest("campaign-site-create", form_data).then(
+                    (res) => {
+                      console.log(form_data);
+                      console.log(res);
+                      setLoading(false);
+                      if (res.s) {
+                        setError({
+                          msg: "Site Added Successfully..!",
+                        });
+                        setTimeout(() => props.navigation.goBack(), 500);
+                        return;
+                      }
+                      if (res.error) {
+                        return setError(res.error);
+                      }
                     }
-                    if (res.error) {
-                      return setError(res.error);
-                    }
-                  }
-                );
-              }
-              setLoading(false);
-            }}
-          >
-            Save
-          </Button>
+                  );
+                }
+                setLoading(false);
+              }}
+            >
+              Save
+            </Button>
+          )}
         </View>
       </ScrollView>
       <Snackbar

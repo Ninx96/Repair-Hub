@@ -160,17 +160,16 @@ const Profile = () => {
               labelStyle={Style.buttonLabel}
               onPress={() => {
                 setAddress({
-                  address: "",
-                  area_name: "",
-                  city_name: "",
-                  state: "",
-                  state_id: "",
-                  city_id: "",
-                  pincode: "",
+                  address: user.address,
+                  area_name: user.area_name,
+                  city_name: user.city_name,
+                  state: user.state,
+                  pincode: user.pincode,
+                  state_id: user.state_id,
                 });
               }}
             >
-              Add New Address
+              {user.address ? "Change Address" : "Add New Address"}
             </Button>
           </View>
 
@@ -178,7 +177,7 @@ const Profile = () => {
             loading={loading}
             disabled={loading}
             mode="contained"
-            style={[Style.button, { borderWidth: 1.5, borderColor: "#4285F4" }]}
+            style={[Style.button, { borderWidth: 1.5, borderColor: "#282f80" }]}
             uppercase={false}
             labelStyle={Style.buttonLabel}
             onPress={() => {
@@ -255,6 +254,7 @@ const Profile = () => {
                   mode="outlined"
                   placeholder="Enter Address"
                   style={Style.input}
+                  value={address?.address}
                   onChangeText={(text) =>
                     setAddress({ ...address, address: text })
                   }
@@ -271,6 +271,7 @@ const Profile = () => {
                   mode="outlined"
                   placeholder="Enter Area"
                   style={Style.input}
+                  value={address?.area_name}
                   onChangeText={(text) =>
                     setAddress({ ...address, area_name: text })
                   }
@@ -289,6 +290,7 @@ const Profile = () => {
                   placeholder="Enter Pincode"
                   style={Style.input}
                   maxLength={6}
+                  value={address?.pincode}
                   onChangeText={(text) => {
                     if (!isNaN(text) && text.length == 6) {
                       const form_data = new FormData();
