@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Image, View, FlatList } from "react-native";
 import { ImageBrowser } from "expo-image-picker-multiple";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
+
 import {
   Button,
   IconButton,
@@ -54,6 +56,34 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
     return file;
   };
 
+  const Upload = async () => {
+    try {
+      const Camera = await ImagePicker.getCameraPermissionsAsync();
+
+      if (!Camera.granted) {
+        ImagePicker.requestCameraPermissionsAsync();
+      } else {
+        const options = {
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 0.1,
+          allowsMultipleSelection: true,
+        };
+        ImagePicker.launchCameraAsync(options).then((result) => {
+          if (!result.cancelled) {
+            const form_data = {
+              name: Date.now() + ".jpg",
+              type: "image/jpeg",
+              uri: result.uri,
+            };
+            onSelect([form_data]);
+          }
+        });
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   return (
     <View>
       <FlatList
@@ -82,8 +112,18 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
       >
         <Button
           mode="contained"
-          color="#4285F4"
           icon="camera"
+          style={Style.button}
+          labelStyle={Style.buttonLabel}
+          uppercase={false}
+          onPress={Upload}
+        >
+          Camera
+        </Button>
+        <Button
+          mode="contained"
+          color="#0096FF"
+          icon="image-multiple"
           style={Style.button}
           labelStyle={Style.buttonLabel}
           uppercase={false}
@@ -91,17 +131,7 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
             setModal(true);
           }}
         >
-          Choose Files
-        </Button>
-        <Button
-          mode="contained"
-          color="red"
-          style={Style.button}
-          labelStyle={Style.buttonLabel}
-          uppercase={false}
-          onPress={onClear}
-        >
-          Clear
+          Gallery
         </Button>
       </View>
 

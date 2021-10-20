@@ -45,7 +45,7 @@ const Dashboard = (props) => {
     });
   }, [status]);
   return (
-    <SafeAreaView style={(Style.container, { alignItems: "center" })}>
+    <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList
         style={{ width: "90%" }}
         data={list}

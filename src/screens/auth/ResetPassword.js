@@ -102,8 +102,9 @@ const ResetPassword = (props) => {
                 }
                 form_data.append(i, params[i]);
               }
-              if (params.new_password !== params.confirm_password) {
-                validation[confirm_password] = "should be same as new password";
+              if (params.new_password != params.confirm_password) {
+                validation.confirm_password = "should be same as new password";
+                proceed = false;
               }
               setError({ ...validation });
               if (proceed) {
