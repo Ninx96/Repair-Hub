@@ -42,10 +42,11 @@ const Sites = (props) => {
         return;
       }
       setError({ msg: "Could not connect to the server" });
+      s;
     });
   }, [status]);
   return (
-    <SafeAreaView style={(Style.container, { alignItems: "center" })}>
+    <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList
         style={{ width: "90%" }}
         data={list}
@@ -131,6 +132,18 @@ const Sites = (props) => {
         )}
         keyExtractor={(item, index) => index.toString()}
       />
+      {userType != "client" && (
+        <FAB
+          icon="plus"
+          style={{ position: "absolute", right: 20, bottom: 20 }}
+          onPress={() =>
+            props.navigation.navigate("TaskDetails", {
+              siteDetails: null,
+              campaign_id,
+            })
+          }
+        />
+      )}
       <Portal>
         <Modal
           visible={status}

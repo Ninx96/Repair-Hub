@@ -18,7 +18,7 @@ import { postRequest, taskImages } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const TaskDetails = (props) => {
-  const { siteDetails } = props.route.params;
+  const { siteDetails, campaign_id } = props.route.params;
   const { getSession, updateUser } = useContext(AuthContext);
   const { user, userType } = getSession();
   const [showMessage, setShowMessage] = useState(null);
@@ -27,18 +27,20 @@ const TaskDetails = (props) => {
 
   const [error, setError] = useState({});
   const [param, setParam] = useState({
-    campaign_id: siteDetails?.id,
+    campaign_id: campaign_id,
     site_address: siteDetails?.site_address,
     site_area_name: siteDetails?.site_area_name,
     site_city_id: siteDetails?.site_city_id,
     site_state_id: siteDetails?.site_state_id,
     medium_id: siteDetails?.medium?.id,
     medium_type_id: siteDetails?.medium_type?.id,
-    size_w: siteDetails?.size_w,
-    size_h: siteDetails?.size_h,
-    free_size: siteDetails?.free_size,
-    nos: siteDetails?.nos,
-    total_area_in_sqft: siteDetails?.total_area_in_sqft,
+    size_w: siteDetails?.size_w ? siteDetails.size_w.toString() : "",
+    size_h: siteDetails?.size_h ? siteDetails.size_h.toString() : "",
+    free_size: siteDetails?.free_size ? siteDetails.free_size.toString() : "",
+    nos: siteDetails?.nos ? siteDetails.nos.toString() : "",
+    total_area_in_sqft: siteDetails?.total_area_in_sqft
+      ? siteDetails.total_area_in_sqft.toString()
+      : "",
     remarks: "",
   });
 
@@ -55,11 +57,13 @@ const TaskDetails = (props) => {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    const imgs = siteDetails.site_images.split(",");
-    imgs.forEach((img) => {
-      images.push({ name: img, type: "image/jpg", uri: taskImages + img });
-    });
-    setImages([...images]);
+    if (siteDetails) {
+      const imgs = siteDetails.site_images.split(",");
+      imgs.forEach((img) => {
+        images.push({ name: img, type: "image/jpg", uri: taskImages + img });
+      });
+      setImages([...images]);
+    }
 
     if (userType != "client") {
       (async () => {
@@ -83,7 +87,7 @@ const TaskDetails = (props) => {
       }
     });
     const form_data = new FormData();
-    form_data.append("state_id", siteDetails.site_state_id);
+    form_data.append("state_id", siteDetails?.site_state_id);
     postRequest("city-all-active", form_data).then((res) => {
       if (res.s) {
         setCity(res.data);
@@ -109,7 +113,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>State</Text>
             <DropDown
-              disabled
+              disabled={siteDetails}
               mode="outlined"
               placeholder="Select State"
               style={Style.input}
@@ -121,7 +125,7 @@ const TaskDetails = (props) => {
                 setParam({ ...param, site_state_id: text });
                 const form_data = new FormData();
                 form_data.append("state_id", text);
-                postRequest("city-all-active").then((res) => {
+                postRequest("city-all-active", form_data).then((res) => {
                   if (res.s) {
                     setCity(res.data);
                   }
@@ -137,7 +141,7 @@ const TaskDetails = (props) => {
           <View style={Style.formControl}>
             <Text style={Style.label}>City</Text>
             <DropDown
-              disabled
+              disabled={siteDetails}
               mode="outlined"
               placeholder="Select State"
               style={Style.input}
@@ -155,180 +159,192 @@ const TaskDetails = (props) => {
             ) : null}
           </View>
 
-          <View style={Style.formControl}>
-            <Text style={Style.label}>District/Block</Text>
-            <TextInput
-              disabled
-              mode="outlined"
-              placeholder="Address line"
-              style={Style.input}
-              value={param?.site_address}
-              onChangeText={(text) =>
-                setParam({ ...param, site_address: text })
-              }
-              error={error.site_address ? true : false}
-            />
-            {error.site_address ? (
-              <Text style={Style.textError}>{error?.site_address}</Text>
-            ) : null}
-          </View>
-
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Exact Location</Text>
-            <TextInput
-              disabled
-              multiline
-              numberOfLines={2}
-              mode="outlined"
-              placeholder="Area name"
-              style={Style.input}
-              value={param?.site_area_name}
-              onChangeText={(text) =>
-                setParam({ ...param, site_area_name: text })
-              }
-              error={error.site_area_name ? true : false}
-            />
-            {error.site_area_name ? (
-              <Text style={Style.textError}>{error?.site_area_name}</Text>
-            ) : null}
-          </View>
-        </View>
-        <Text style={[Style.heading, { marginBottom: 20 }]}>
-          Product Details
-        </Text>
-        <View style={Style.form}>
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Medium</Text>
-            <DropDown
-              disabled
-              mode="outlined"
-              placeholder="Select Medium"
-              data={medium}
-              exLabel="name"
-              exValue="id"
-              style={Style.input}
-              value={param?.medium_id}
-              onChange={(text) => setParam({ ...param, medium_id: text })}
-              error={error.medium_id ? true : false}
-            />
-            {error.medium_id ? (
-              <Text style={Style.textError}>{error?.medium_id}</Text>
-            ) : null}
-          </View>
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Medium Type</Text>
-            <DropDown
-              disabled
-              mode="outlined"
-              placeholder="Select Medium Type"
-              data={mediumtype}
-              exLabel="name"
-              exValue="id"
-              style={Style.input}
-              value={param?.medium_type_id}
-              onChange={(text) => setParam({ ...param, medium_type_id: text })}
-              error={error.medium_type_id ? true : false}
-            />
-            {error.medium_type_id ? (
-              <Text style={Style.textError}>{error?.medium_type_id}</Text>
-            ) : null}
-          </View>
-
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <View style={[Style.formControl, { width: "49%" }]}>
-              <Text style={Style.label}>Size(W)</Text>
+          {userType != "client" && (
+            <View style={Style.formControl}>
+              <Text style={Style.label}>District/Block</Text>
               <TextInput
-                disabled
-                keyboardType="number-pad"
+                disabled={siteDetails}
                 mode="outlined"
-                placeholder="Enter Size(W)"
-                style={[Style.input]}
-                maxLength={6}
-                value={param?.size_w.toString()}
-                onChangeText={(text) => {}}
-                error={error.size_w ? true : false}
-              />
-              {error.size_w ? (
-                <Text style={Style.textError}>{error?.size_w}</Text>
-              ) : null}
-            </View>
-
-            <View style={[Style.formControl, { width: "49%" }]}>
-              <Text style={Style.label}>Size(H)</Text>
-              <TextInput
-                disabled
-                keyboardType="number-pad"
-                mode="outlined"
-                placeholder="Enter Size(H)"
+                placeholder="Address line"
                 style={Style.input}
-                value={param?.size_h.toString()}
-                onChangeText={(text) => setParam({ ...param, size_h: text })}
-                error={error.size_h ? true : false}
-              />
-              {error.size_h ? (
-                <Text style={Style.textError}>{error?.size_h}</Text>
-              ) : null}
-            </View>
-          </View>
-
-          <View style={Style.formControl}>
-            <Text style={Style.label}>Free Size</Text>
-            <TextInput
-              disabled
-              mode="outlined"
-              placeholder="Enter Free Size"
-              style={Style.input}
-              value={param?.free_size}
-              onChangeText={(text) => setParam({ ...param, free_size: text })}
-              error={error.free_size ? true : false}
-            />
-            {error.free_size ? (
-              <Text style={Style.textError}>{error?.free_size}</Text>
-            ) : null}
-          </View>
-
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <View style={[Style.formControl, { width: "49%" }]}>
-              <Text style={Style.label}>NOS.</Text>
-              <TextInput
-                disabled
-                keyboardType="number-pad"
-                mode="outlined"
-                placeholder="Enter NOS."
-                style={Style.input}
-                value={String(param?.nos)}
-                onChangeText={(text) => setParam({ ...param, nos: text })}
-                error={error.nos ? true : false}
-              />
-              {error.nos ? (
-                <Text style={Style.textError}>{error?.nos}</Text>
-              ) : null}
-            </View>
-
-            <View style={[Style.formControl, { width: "49%" }]}>
-              <Text style={Style.label}>TOTAL SQ.FT.</Text>
-              <TextInput
-                disabled
-                keyboardType="number-pad"
-                mode="outlined"
-                placeholder="Enter TOTAL SQ.FT."
-                style={Style.input}
-                value={param?.total_area_in_sqft}
+                value={param?.site_address}
                 onChangeText={(text) =>
-                  setParam({ ...param, total_area_in_sqft: text })
+                  setParam({ ...param, site_address: text })
                 }
-                error={error.total_area_in_sqft ? true : false}
+                error={error.site_address ? true : false}
               />
-              {error.total_area_in_sqft ? (
-                <Text style={Style.textError}>{error?.total_area_in_sqft}</Text>
+              {error.site_address ? (
+                <Text style={Style.textError}>{error?.site_address}</Text>
               ) : null}
             </View>
-          </View>
+          )}
+
+          {userType != "client" && (
+            <View style={Style.formControl}>
+              <Text style={Style.label}>Exact Location</Text>
+              <TextInput
+                disabled={siteDetails}
+                multiline
+                numberOfLines={2}
+                mode="outlined"
+                placeholder="Area name"
+                style={Style.input}
+                value={param?.site_area_name}
+                onChangeText={(text) =>
+                  setParam({ ...param, site_area_name: text })
+                }
+                error={error.site_area_name ? true : false}
+              />
+              {error.site_area_name ? (
+                <Text style={Style.textError}>{error?.site_area_name}</Text>
+              ) : null}
+            </View>
+          )}
         </View>
+        {userType != "client" && (
+          <Text style={[Style.heading, { marginBottom: 20 }]}>
+            Product Details
+          </Text>
+        )}
+        {userType != "client" && (
+          <View style={Style.form}>
+            <View style={Style.formControl}>
+              <Text style={Style.label}>Medium</Text>
+              <DropDown
+                disabled={siteDetails}
+                mode="outlined"
+                placeholder="Select Medium"
+                data={medium}
+                exLabel="name"
+                exValue="id"
+                style={Style.input}
+                value={param?.medium_id}
+                onChange={(text) => setParam({ ...param, medium_id: text })}
+                error={error.medium_id ? true : false}
+              />
+              {error.medium_id ? (
+                <Text style={Style.textError}>{error?.medium_id}</Text>
+              ) : null}
+            </View>
+            <View style={Style.formControl}>
+              <Text style={Style.label}>Medium Type</Text>
+              <DropDown
+                disabled={siteDetails}
+                mode="outlined"
+                placeholder="Select Medium Type"
+                data={mediumtype}
+                exLabel="name"
+                exValue="id"
+                style={Style.input}
+                value={param?.medium_type_id}
+                onChange={(text) =>
+                  setParam({ ...param, medium_type_id: text })
+                }
+                error={error.medium_type_id ? true : false}
+              />
+              {error.medium_type_id ? (
+                <Text style={Style.textError}>{error?.medium_type_id}</Text>
+              ) : null}
+            </View>
+
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View style={[Style.formControl, { width: "49%" }]}>
+                <Text style={Style.label}>Size(W)</Text>
+                <TextInput
+                  disabled={siteDetails}
+                  keyboardType="number-pad"
+                  mode="outlined"
+                  placeholder="Enter Size(W)"
+                  style={[Style.input]}
+                  maxLength={6}
+                  value={param?.size_w}
+                  onChangeText={(text) => setParam({ ...param, size_w: text })}
+                  error={error.size_w ? true : false}
+                />
+                {error.size_w ? (
+                  <Text style={Style.textError}>{error?.size_w}</Text>
+                ) : null}
+              </View>
+
+              <View style={[Style.formControl, { width: "49%" }]}>
+                <Text style={Style.label}>Size(H)</Text>
+                <TextInput
+                  disabled={siteDetails}
+                  keyboardType="number-pad"
+                  mode="outlined"
+                  placeholder="Enter Size(H)"
+                  style={Style.input}
+                  value={param?.size_h}
+                  onChangeText={(text) => setParam({ ...param, size_h: text })}
+                  error={error.size_h ? true : false}
+                />
+                {error.size_h ? (
+                  <Text style={Style.textError}>{error?.size_h}</Text>
+                ) : null}
+              </View>
+            </View>
+
+            <View style={Style.formControl}>
+              <Text style={Style.label}>Free Size</Text>
+              <TextInput
+                disabled={siteDetails}
+                mode="outlined"
+                placeholder="Enter Free Size"
+                style={Style.input}
+                value={param?.free_size}
+                onChangeText={(text) => setParam({ ...param, free_size: text })}
+                error={error.free_size ? true : false}
+              />
+              {error.free_size ? (
+                <Text style={Style.textError}>{error?.free_size}</Text>
+              ) : null}
+            </View>
+
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View style={[Style.formControl, { width: "49%" }]}>
+                <Text style={Style.label}>NOS.</Text>
+                <TextInput
+                  disabled={siteDetails}
+                  keyboardType="number-pad"
+                  mode="outlined"
+                  placeholder="Enter NOS."
+                  style={Style.input}
+                  value={param?.nos}
+                  onChangeText={(text) => setParam({ ...param, nos: text })}
+                  error={error.nos ? true : false}
+                />
+                {error.nos ? (
+                  <Text style={Style.textError}>{error?.nos}</Text>
+                ) : null}
+              </View>
+
+              <View style={[Style.formControl, { width: "49%" }]}>
+                <Text style={Style.label}>TOTAL SQ.FT.</Text>
+                <TextInput
+                  disabled={siteDetails}
+                  keyboardType="number-pad"
+                  mode="outlined"
+                  placeholder="Enter TOTAL SQ.FT."
+                  style={Style.input}
+                  value={param?.total_area_in_sqft}
+                  onChangeText={(text) =>
+                    setParam({ ...param, total_area_in_sqft: text })
+                  }
+                  error={error.total_area_in_sqft ? true : false}
+                />
+                {error.total_area_in_sqft ? (
+                  <Text style={Style.textError}>
+                    {error?.total_area_in_sqft}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+          </View>
+        )}
 
         <View style={Style.form}>
           {userType != "client" && (
