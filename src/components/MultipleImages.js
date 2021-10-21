@@ -86,19 +86,19 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
 
   return (
     <View>
-      <FlatList
-        data={data}
-        renderItem={({ item, index }) => (
-          <TouchableRipple onPress={() => setmodalImage({ uri: item.uri })}>
+      <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+        {data.map((item, index) => (
+          <TouchableRipple
+            key={index}
+            onPress={() => setmodalImage({ uri: item.uri })}
+          >
             <Image
               source={{ uri: item.uri }}
-              style={{ height: 100, width: 100, marginHorizontal: 5 }}
+              style={{ height: 100, width: 100, margin: 2 }}
             />
           </TouchableRipple>
-        )}
-        horizontal
-        keyExtractor={(item, index) => index.toString()}
-      />
+        ))}
+      </View>
 
       <View
         style={[

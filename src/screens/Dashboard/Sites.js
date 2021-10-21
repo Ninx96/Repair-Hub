@@ -116,12 +116,19 @@ const Sites = (props) => {
               <View
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
               >
-                <Text style={{ fontSize: 28 }} numberOfLines={2}>
-                  {item?.medium?.name || "N/A"}
-                </Text>
-                <Text style={{ fontSize: 20, color: "#888" }} numberOfLines={1}>
-                  {item?.medium_type?.name || "N/A"}
-                </Text>
+                {userType != "client" && (
+                  <Text style={{ fontSize: 28 }} numberOfLines={2}>
+                    {item?.medium?.name || "N/A"}
+                  </Text>
+                )}
+                {userType != "client" && (
+                  <Text
+                    style={{ fontSize: 20, color: "#888" }}
+                    numberOfLines={1}
+                  >
+                    {item?.medium_type?.name || "N/A"}
+                  </Text>
+                )}
                 <Text style={{ fontSize: 20 }} numberOfLines={2}>
                   {item?.site_address}, {item?.site_area_name},{" "}
                   {item?.state?.state}
@@ -207,7 +214,8 @@ const Sites = (props) => {
                     postRequest("campaign-update", form_data).then((res) => {
                       if (res.s) {
                         setStatus(null);
-                        return setTimeout(() => props.navigation.goBack(), 500);
+                        // setError({ msg: res.msg });
+                        //return setTimeout(() => props.navigation.goBack(), 500);
                       }
                       if (res.error) {
                         return setError(res.error);

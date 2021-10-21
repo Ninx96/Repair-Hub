@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Image, SafeAreaView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -8,10 +8,13 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import { AuthContext } from "../../components/ContextComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Register = (props) => {
+  const { signIn } = useContext(AuthContext);
+
   const { type } = props.route.params;
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -163,10 +166,17 @@ const Register = (props) => {
                   setLoading(false);
                   if (res.s) {
                     console.log(res);
-                    return props.navigation.navigate("Otp", {
+                    // return props.navigation.navigate("Otp", {
+                    //   user: res.data,
+                    //   type: type,
+                    //   isForget: false,
+                    // });
+
+                    return signIn({
+                      type: "LOGIN",
+                      userToken: res.data.id,
+                      userType: type,
                       user: res.data,
-                      type: type,
-                      isForget: false,
                     });
                   }
                   if (res.error) {

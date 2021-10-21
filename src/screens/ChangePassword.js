@@ -9,7 +9,11 @@ const ChangePassword = () => {
   const { getSession } = useContext(AuthContext);
   const { userType, userToken } = getSession();
   const [error, setError] = useState({});
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    old_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
   const [showMessage, setShowMessage] = useState(null);
   return (
     <SafeAreaView style={Style.container}>
@@ -26,6 +30,7 @@ const ChangePassword = () => {
               mode="outlined"
               placeholder="Enter Old Password"
               style={Style.input}
+              value={params.old_password}
               error={error.old_password ? true : false}
               onChangeText={(text) =>
                 setParams({ ...params, old_password: text })
@@ -42,6 +47,7 @@ const ChangePassword = () => {
               placeholder="Enter Password"
               style={Style.input}
               secureTextEntry={true}
+              value={params.new_password}
               error={error.new_password ? true : false}
               onChangeText={(text) =>
                 setParams({ ...params, new_password: text })
@@ -58,6 +64,7 @@ const ChangePassword = () => {
               mode="outlined"
               placeholder="Confirm Password"
               style={Style.input}
+              value={params.confirm_password}
               error={error.confirm_password ? true : false}
               onChangeText={(text) =>
                 setParams({ ...params, confirm_password: text })
@@ -74,7 +81,11 @@ const ChangePassword = () => {
             labelStyle={Style.buttonLabel}
             onPress={() => {
               const form_data = new FormData();
-              form_data.append("client_id", userToken);
+              if (userType == "client") {
+                form_data.append("client_id", userToken);
+              } else {
+                form_data.append("vendor_id", userToken);
+              }
               var proceed = true;
               var validation = {};
               for (let i in params) {
@@ -86,19 +97,29 @@ const ChangePassword = () => {
               }
               setError({ ...validation });
               if (proceed) {
+                console.log(form_data);
+                console.log("asd");
                 postRequest(
                   userType == "client"
                     ? "client-change-password"
                     : "vendor-change-password",
                   form_data
                 ).then((res) => {
-                  setParams({});
+                  console.log(res);
                   if (res.s) {
-                    return setShowMessage({
+                    setParams({
+                      old_password: "",
+                      new_password: "",
+                      confirm_password: "",
+                    });
+                    return setError({
                       msg: "Password Updated Successfully..!",
                     });
                   }
-                  setError(res.error);
+                  if (res.error) {
+                    return setError(res.error);
+                  }
+                  setError({ msg: res.msg });
                 });
               }
             }}
@@ -108,13 +129,11 @@ const ChangePassword = () => {
         </View>
       </ScrollView>
       <Snackbar
-        visible={showMessage}
+        visible={error.msg}
         style={{ backgroundColor: "#5cb85c" }}
-        onDismiss={() => setShowMessage(null)}
+        onDismiss={() => setError({})}
       >
-        <Text style={[Style.textRegular, { color: "#FFF" }]}>
-          {showMessage?.msg}
-        </Text>
+        <Text style={[Style.textRegular, { color: "#FFF" }]}>{error?.msg}</Text>
       </Snackbar>
     </SafeAreaView>
   );

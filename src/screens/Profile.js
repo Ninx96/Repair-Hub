@@ -32,7 +32,13 @@ const Profile = () => {
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState(null);
+  const addrVal = {
+    address: user.address,
+    area_name: user.area_name,
+    city_name: user.city_name,
+    state: user.state,
+    pincode: user.pincode,
+  };
 
   return (
     <SafeAreaView style={Style.container}>
@@ -118,59 +124,104 @@ const Profile = () => {
           </View>
 
           <Text style={Style.heading}>My Addresses</Text>
-          <View style={{ marginVertical: 20 }}>
-            <Card style={{ padding: 20, backgroundColor: "#F5F5F5" }}>
-              <Text style={Style.textBig}>Office</Text>
-              <Text style={[Style.textRegular, { color: "#888" }]}>
-                {param.address || user.address},{" "}
-                {param.area_name || user.area_name},{" "}
-                {param.city_name || user.city_name}, {param.state || user.state}{" "}
-                - {param.pincode || user.pincode}
-              </Text>
-            </Card>
 
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Address</Text>
+            <TextInput
+              multiline
+              numberOfLines={2}
+              mode="outlined"
+              placeholder="Enter Address"
+              style={Style.input}
+              value={param?.address}
+              onChangeText={(text) => setParam({ ...param, address: text })}
+              error={error.address ? true : false}
+            />
             {error.address ? (
               <Text style={Style.textError}>{error?.address}</Text>
             ) : null}
+          </View>
 
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Area</Text>
+            <TextInput
+              mode="outlined"
+              placeholder="Enter Area"
+              style={Style.input}
+              value={param?.area_name}
+              onChangeText={(text) => setParam({ ...param, area_name: text })}
+              error={error.area_name ? true : false}
+            />
             {error.area_name ? (
               <Text style={Style.textError}>{error?.area_name}</Text>
             ) : null}
+          </View>
 
-            {error.city_name ? (
-              <Text style={Style.textError}>{error?.city_name}</Text>
-            ) : null}
-
-            {error.state_id ? (
-              <Text style={Style.textError}>{error?.state_id}</Text>
-            ) : null}
-
+          <View style={Style.formControl}>
+            <Text style={Style.label}>Pincode</Text>
+            <TextInput
+              keyboardType="number-pad"
+              mode="outlined"
+              placeholder="Enter Pincode"
+              style={Style.input}
+              maxLength={6}
+              value={param?.pincode}
+              onChangeText={(text) => {
+                setParam({ ...param, pincode: text });
+                if (!isNaN(text) && text.length == 6) {
+                  const form_data = new FormData();
+                  form_data.append("pincode", text);
+                  postRequest("get-city-state-from-pincode", form_data).then(
+                    (res) => {
+                      if (res.s) {
+                        setParam({
+                          ...param,
+                          city_name: res.city,
+                          state: res.state,
+                          state_id: res.state_id,
+                          city_id: res.city_id,
+                          pincode: text,
+                        });
+                      }
+                    }
+                  );
+                }
+              }}
+              error={error.pincode ? true : false}
+            />
             {error.pincode ? (
               <Text style={Style.textError}>{error?.pincode}</Text>
             ) : null}
+          </View>
 
-            <Button
-              disabled={loading}
+          <View style={Style.formControl}>
+            <Text style={Style.label}>City</Text>
+            <TextInput
               mode="outlined"
-              style={[
-                Style.button,
-                { borderWidth: 1.5, borderColor: "#282f80" },
-              ]}
-              uppercase={false}
-              labelStyle={Style.buttonLabel}
-              onPress={() => {
-                setAddress({
-                  address: user.address,
-                  area_name: user.area_name,
-                  city_name: user.city_name,
-                  state: user.state,
-                  pincode: user.pincode,
-                  state_id: user.state_id,
-                });
-              }}
-            >
-              {user.address ? "Change Address" : "Add New Address"}
-            </Button>
+              placeholder="Enter City"
+              style={Style.input}
+              value={param?.city_name}
+              onChangeText={(text) => setParam({ ...param, city_name: text })}
+              error={error.city_name ? true : false}
+            />
+            {error.city_name ? (
+              <Text style={Style.textError}>{error?.city_name}</Text>
+            ) : null}
+          </View>
+
+          <View style={Style.formControl}>
+            <Text style={Style.label}>State</Text>
+            <TextInput
+              mode="outlined"
+              placeholder="Enter State"
+              style={Style.input}
+              value={param?.state}
+              onChangeText={(text) => setParam({ ...param, state: text })}
+              error={error.state ? true : false}
+            />
+            {error.state ? (
+              <Text style={Style.textError}>{error?.state}</Text>
+            ) : null}
           </View>
 
           <Button
@@ -186,13 +237,25 @@ const Profile = () => {
               var proceed = true;
               var validation = {};
               for (let i in param) {
-                // if (!param[i]) {
-                //   validation[i] = "This field is required";
-                //   proceed = false;
-                // }
+                if (!param[i]) {
+                  validation[i] = "This field is required";
+                }
                 form_data.append(i, param[i]);
               }
-              // setError({ ...validation });
+
+              if (userType == "client") {
+                delete validation.name;
+              } else {
+                delete validation.company_name;
+              }
+              delete validation.pan_no;
+              delete validation.gst_no;
+              delete validation.state_id;
+
+              if (Object.keys(validation).length) {
+                proceed = false;
+                setError({ ...validation });
+              }
               if (proceed) {
                 return postRequest(
                   userType == "client"
@@ -200,6 +263,7 @@ const Profile = () => {
                     : "vendor-edit-profile",
                   form_data
                 ).then((res) => {
+                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     updateUser({
@@ -231,149 +295,7 @@ const Profile = () => {
           </Button>
         </View>
       </ScrollView>
-      <Portal>
-        <Modal
-          visible={address}
-          dismissable={false}
-          contentContainerStyle={[Style.container, { paddingTop: 0 }]}
-        >
-          <View style={{ flexDirection: "row", width: "100%" }}>
-            <IconButton
-              icon="chevron-left"
-              size={35}
-              onPress={() => setAddress(null)}
-            />
-          </View>
-          <ScrollView contentContainerStyle={{ alignItems: "center" }}>
-            <View style={Style.form}>
-              <View style={Style.formControl}>
-                <Text style={Style.label}>Address</Text>
-                <TextInput
-                  multiline
-                  numberOfLines={2}
-                  mode="outlined"
-                  placeholder="Enter Address"
-                  style={Style.input}
-                  value={address?.address}
-                  onChangeText={(text) =>
-                    setAddress({ ...address, address: text })
-                  }
-                  error={error.address ? true : false}
-                />
-                {error.address ? (
-                  <Text style={Style.textError}>{error?.address}</Text>
-                ) : null}
-              </View>
 
-              <View style={Style.formControl}>
-                <Text style={Style.label}>Area</Text>
-                <TextInput
-                  mode="outlined"
-                  placeholder="Enter Area"
-                  style={Style.input}
-                  value={address?.area_name}
-                  onChangeText={(text) =>
-                    setAddress({ ...address, area_name: text })
-                  }
-                  error={error.area_name ? true : false}
-                />
-                {error.area_name ? (
-                  <Text style={Style.textError}>{error?.area_name}</Text>
-                ) : null}
-              </View>
-
-              <View style={Style.formControl}>
-                <Text style={Style.label}>Pincode</Text>
-                <TextInput
-                  keyboardType="number-pad"
-                  mode="outlined"
-                  placeholder="Enter Pincode"
-                  style={Style.input}
-                  maxLength={6}
-                  value={address?.pincode}
-                  onChangeText={(text) => {
-                    if (!isNaN(text) && text.length == 6) {
-                      const form_data = new FormData();
-                      form_data.append("pincode", text);
-                      postRequest(
-                        "get-city-state-from-pincode",
-                        form_data
-                      ).then((res) => {
-                        if (res.s) {
-                          setAddress({
-                            ...address,
-                            city_name: res.city,
-                            state: res.state,
-                            state_id: res.state_id,
-                            city_id: res.city_id,
-                            pincode: text,
-                          });
-                        }
-                      });
-                    }
-                  }}
-                  error={error.pincode ? true : false}
-                />
-                {error.pincode ? (
-                  <Text style={Style.textError}>{error?.pincode}</Text>
-                ) : null}
-              </View>
-
-              <View style={Style.formControl}>
-                <Text style={Style.label}>City</Text>
-                <TextInput
-                  mode="outlined"
-                  placeholder="Enter City"
-                  style={Style.input}
-                  value={address?.city_name}
-                  onChangeText={(text) =>
-                    setAddress({ ...address, city_name: text })
-                  }
-                  error={error.address ? true : false}
-                />
-                {error.pincode ? (
-                  <Text style={Style.textError}>{error?.pincode}</Text>
-                ) : null}
-              </View>
-
-              <View style={Style.formControl}>
-                <Text style={Style.label}>State</Text>
-                <TextInput
-                  disabled
-                  mode="outlined"
-                  placeholder="Enter State"
-                  style={Style.input}
-                  value={address?.state}
-                />
-              </View>
-
-              <Button
-                mode="contained"
-                style={Style.button}
-                uppercase={false}
-                labelStyle={Style.buttonLabel}
-                onPress={() => {
-                  var validation = {};
-                  var proceed = true;
-                  for (let i in address) {
-                    if (!address[i]) {
-                      validation[i] = "This field is required";
-                      proceed = false;
-                    }
-                  }
-                  setError({ ...validation });
-                  if (proceed) {
-                    setParam({ ...param, ...address });
-                    setAddress(null);
-                  }
-                }}
-              >
-                Save
-              </Button>
-            </View>
-          </ScrollView>
-        </Modal>
-      </Portal>
       <Snackbar
         visible={error.msg}
         style={{ backgroundColor: "#5cb85c" }}

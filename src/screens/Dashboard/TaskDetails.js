@@ -28,6 +28,7 @@ const TaskDetails = (props) => {
   const [error, setError] = useState({});
   const [param, setParam] = useState({
     campaign_id: campaign_id,
+    id: siteDetails?.id,
     site_address: siteDetails?.site_address,
     site_area_name: siteDetails?.site_area_name,
     site_city_id: siteDetails?.site_city_id,
@@ -54,10 +55,12 @@ const TaskDetails = (props) => {
   const [city, setCity] = useState([]);
   const [medium, setMedium] = useState([]);
   const [mediumtype, setMediumtype] = useState([]);
-  const [location, setLocation] = useState(null);
+  // const [location, setLocation] = useState(null);
+
+  // console.log(siteDetails);
 
   useEffect(() => {
-    if (siteDetails) {
+    if (siteDetails?.site_images) {
       const imgs = siteDetails.site_images.split(",");
       imgs.forEach((img) => {
         images.push({ name: img, type: "image/jpg", uri: taskImages + img });
@@ -73,11 +76,11 @@ const TaskDetails = (props) => {
           return;
         }
 
-        let location = await Location.getCurrentPositionAsync({});
-        if (!location) {
-          props.navigation.goBack();
-        }
-        setLocation(location);
+        // let location = await Location.getCurrentPositionAsync({});
+        // if (!location) {
+        //   props.navigation.goBack();
+        // }
+        // setLocation(location);
       })();
     }
 
@@ -143,7 +146,7 @@ const TaskDetails = (props) => {
             <DropDown
               disabled={siteDetails}
               mode="outlined"
-              placeholder="Select State"
+              placeholder="Select City"
               style={Style.input}
               data={city}
               exLabel="name"
@@ -390,17 +393,27 @@ const TaskDetails = (props) => {
 
           {userType != "client" && (
             <Button
-              disabled={!location}
               loading={loading}
               mode="contained"
               style={Style.button}
               uppercase={false}
               labelStyle={Style.buttonLabel}
-              onPress={() => {
+              onPress={async () => {
                 setLoading(true);
                 var validation = {};
                 var proceed = true;
                 const form_data = new FormData();
+                let location = await Location.getCurrentPositionAsync({}).catch(
+                  (res) => false
+                );
+
+                if (!location) {
+                  setLoading(false);
+                  return setError({
+                    msg: "Plase allow location and try again..!",
+                  });
+                }
+
                 form_data.append("latitude", location?.coords?.latitude);
                 form_data.append("longitude", location?.coords?.longitude);
                 images.forEach((img, idx) => {
@@ -415,23 +428,26 @@ const TaskDetails = (props) => {
                 }
                 setError({ ...validation });
                 if (proceed) {
-                  return postRequest("campaign-site-create", form_data).then(
-                    (res) => {
-                      console.log(form_data);
-                      console.log(res);
-                      setLoading(false);
-                      if (res.s) {
-                        setError({
-                          msg: "Site Added Successfully..!",
-                        });
-                        setTimeout(() => props.navigation.goBack(), 500);
-                        return;
-                      }
-                      if (res.error) {
-                        return setError(res.error);
-                      }
+                  return postRequest(
+                    campaign_id != "undefined"
+                      ? "campaign-site-update"
+                      : "campaign-site-create",
+                    form_data
+                  ).then((res) => {
+                    console.log(form_data);
+                    console.log(res);
+                    setLoading(false);
+                    if (res.s) {
+                      setError({
+                        msg: "Site Added Successfully..!",
+                      });
+                      setTimeout(() => props.navigation.goBack(), 500);
+                      return;
                     }
-                  );
+                    if (res.error) {
+                      return setError(res.error);
+                    }
+                  });
                 }
                 setLoading(false);
               }}
