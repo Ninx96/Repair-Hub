@@ -55,9 +55,6 @@ const TaskDetails = (props) => {
   const [city, setCity] = useState([]);
   const [medium, setMedium] = useState([]);
   const [mediumtype, setMediumtype] = useState([]);
-  // const [location, setLocation] = useState(null);
-
-  // console.log(siteDetails);
 
   useEffect(() => {
     if (siteDetails?.site_images) {
@@ -358,10 +355,19 @@ const TaskDetails = (props) => {
           <MultipleImages
             disabled={userType == "client"}
             data={images}
-            onSelect={(filesArray) => {
-              setImages([...images, ...filesArray]);
+            onSelect={async (filesArray) => {
+              let location = await Location.getCurrentPositionAsync({}).catch(
+                (res) => false
+              );
+              if (location) {
+                filesArray.forEach((file) => {
+                  file.latitude = location?.coords?.latitude;
+                  file.longitude = location?.coords?.longitude;
+                });
+                setImages([...images, ...filesArray]);
+              }
             }}
-            onClear={() => setImages([])}
+            onClear={() => setImages([...images])}
           />
         </View>
 
@@ -419,6 +425,7 @@ const TaskDetails = (props) => {
                 images.forEach((img, idx) => {
                   form_data.append(`file[${idx}]`, img);
                 });
+
                 for (let i in param) {
                   // if (!param[i]) {
                   //   validation[i] = "This field is required";

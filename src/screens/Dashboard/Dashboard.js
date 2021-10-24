@@ -65,11 +65,7 @@ const Dashboard = (props) => {
                 disabled={true}
                 style={{
                   backgroundColor:
-                    item.current_status_id == 1
-                      ? "#f0ad4e"
-                      : item.current_status_id == 2
-                      ? "#282f80"
-                      : "#d9534f",
+                    item.current_status_id == 1 ? "#f0ad4e" : "#282f80",
                   width: "30%",
                   paddingLeft: 10,
                   justifyContent: "center",
@@ -97,11 +93,7 @@ const Dashboard = (props) => {
                     {moment(item?.created_at).format("LT")}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#FFF" }}>
-                    {item.current_status_id == 1
-                      ? "Pending"
-                      : item.current_status_id == 2
-                      ? "Verified"
-                      : "Cancelled"}
+                    {item.current_status_id == 1 ? "Pending" : "Verified"}
                   </Text>
                 </View>
               </TouchableRipple>
@@ -110,6 +102,7 @@ const Dashboard = (props) => {
                 onPress={() =>
                   props.navigation.navigate("Sites", {
                     campaign_id: item.id,
+                    status_id: item?.current_status_id,
                     start_date: item?.start_date,
                     end_date: item?.end_date,
                   })
@@ -119,9 +112,9 @@ const Dashboard = (props) => {
                   <Text style={{ fontSize: 28 }} numberOfLines={2}>
                     {item?.title || "N/A"}
                   </Text>
-                  <Text style={{ fontSize: 20, color: "#888" }}>
+                  {/* <Text style={{ fontSize: 20, color: "#888" }}>
                     {item?.client?.company_name || "N/A"}
-                  </Text>
+                  </Text> */}
                   <Text style={{ fontSize: 20 }}>
                     {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
                     {moment(item?.end_date).format("DD/MM/YYYY")}

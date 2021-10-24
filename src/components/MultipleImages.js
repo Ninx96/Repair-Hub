@@ -92,10 +92,35 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
             key={index}
             onPress={() => setmodalImage({ uri: item.uri })}
           >
-            <Image
-              source={{ uri: item.uri }}
-              style={{ height: 100, width: 100, margin: 2 }}
-            />
+            <>
+              {!disabled && (
+                <IconButton
+                  icon="close"
+                  color="#FFF"
+                  size={15}
+                  style={{
+                    backgroundColor: "red",
+                    position: "absolute",
+                    top: -8,
+                    right: -10,
+                    elevation: 10,
+                  }}
+                  onPress={() => {
+                    data.splice(index, 1);
+                    onClear();
+                  }}
+                />
+              )}
+              <Image
+                source={{ uri: item.uri }}
+                style={{
+                  height: 100,
+                  width: 90,
+                  marginHorizontal: 5,
+                  marginVertical: 15,
+                }}
+              />
+            </>
           </TouchableRipple>
         ))}
       </View>

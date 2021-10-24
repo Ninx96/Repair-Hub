@@ -16,6 +16,7 @@ const DrawerComponent = (props) => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
+      backBehavior="history"
       drawerContent={(props) => <DrawerLayout {...props} />}
       screenOptions={{ unmountOnBlur: true, title: "" }}
     >

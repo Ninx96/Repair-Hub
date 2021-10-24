@@ -24,7 +24,7 @@ import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Sites = (props) => {
-  const { campaign_id, start_date, end_date } = props.route.params;
+  const { campaign_id, status_id, start_date, end_date } = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -139,7 +139,7 @@ const Sites = (props) => {
         )}
         keyExtractor={(item, index) => index.toString()}
       />
-      {userType != "client" && (
+      {userType != "client" && status_id == 2 && (
         <FAB
           icon="plus"
           style={{ position: "absolute", right: 20, bottom: 20 }}
