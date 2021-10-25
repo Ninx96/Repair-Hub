@@ -45,6 +45,8 @@ const TaskDetails = (props) => {
     remarks: "",
   });
 
+  console.log(siteDetails);
+
   //components
 
   const [images, setImages] = useState([]);
@@ -436,7 +438,7 @@ const TaskDetails = (props) => {
                 setError({ ...validation });
                 if (proceed) {
                   return postRequest(
-                    campaign_id != "undefined"
+                    siteDetails?.id
                       ? "campaign-site-update"
                       : "campaign-site-create",
                     form_data

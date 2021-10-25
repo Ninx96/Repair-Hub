@@ -82,7 +82,10 @@ const Sites = (props) => {
               marginVertical: 10,
             }}
             onPress={() =>
-              props.navigation.navigate("TaskDetails", { siteDetails: item })
+              props.navigation.navigate("TaskDetails", {
+                siteDetails: item,
+                campaign_id: campaign_id,
+              })
             }
           >
             <View style={{ flexDirection: "row", flex: 1 }}>
@@ -146,7 +149,7 @@ const Sites = (props) => {
           onPress={() =>
             props.navigation.navigate("TaskDetails", {
               siteDetails: null,
-              campaign_id,
+              campaign_id: campaign_id,
             })
           }
         />
