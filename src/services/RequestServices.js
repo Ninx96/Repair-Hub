@@ -1,5 +1,5 @@
-const URL = "https://media.brandscoot.com/api/v1/";
-export const taskImages = "https://media.brandscoot.com/uploads/sites/";
+const URL = "https://appbackend.ascendmedia.in/api/v1/";
+export const taskImages = "https://appbackend.ascendmedia.in/uploads/sites/";
 
 export const postRequest = (path, body, header) => {
   return fetch(URL + path, {
