@@ -42,12 +42,12 @@ const Login = (props) => {
 
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Enter Email</Text>
+            <Text style={Style.label}>Enter Username</Text>
             <TextInput
               disabled={loading}
               error={error.email ? true : false}
               mode="outlined"
-              placeholder="Enter Email"
+              placeholder="Enter Username"
               style={Style.input}
               onChangeText={(text) => setParams({ ...params, email: text })}
             />

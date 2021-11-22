@@ -33,9 +33,22 @@ const Sites = (props) => {
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
 
+  const [query, setQuery] = useState({});
+
+  // DropDown
+
+  const [state, setState] = useState([]);
+  const [city, setCity] = useState([]);
+  const [location, setLocation] = useState([]);
+
   useEffect(() => {
     const form_data = new FormData();
     form_data.append("campaign_id", campaign_id);
+    postRequest("state-all-active").then((res) => {
+      if (res.s) {
+        setState(res.data);
+      }
+    });
     postRequest("campaign-site-list", form_data).then((res) => {
       if (res.s) {
         setList(res.data.data);
@@ -229,6 +242,133 @@ const Sites = (props) => {
                 }}
               >
                 Save
+              </Button>
+            </View>
+          </ScrollView>
+        </Modal>
+        <Modal
+          visible={true}
+          dismissable={false}
+          contentContainerStyle={[Style.container, { paddingTop: 0 }]}
+        >
+          <View style={{ flexDirection: "row", width: "100%" }}>
+            <IconButton
+              icon="chevron-left"
+              size={35}
+              onPress={() => setStatus(null)}
+            />
+          </View>
+          <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+            <Text style={[Style.heading, { marginBottom: 20 }]}>Sites</Text>
+            <View style={Style.form}>
+              <View style={Style.formControl}>
+                <Text style={Style.label}>State</Text>
+                <DropDown
+                  mode="outlined"
+                  placeholder="Select State"
+                  style={Style.input}
+                  data={state}
+                  exLabel="state"
+                  exValue="id"
+                  value={query?.site_state_id}
+                  onChange={(text) => {
+                    setQuery({ ...query, site_state_id: text });
+                    const form_data = new FormData();
+                    form_data.append("state_id", text);
+                    postRequest("city-all-active", form_data).then((res) => {
+                      if (res.s) {
+                        setCity(res.data);
+                      }
+                    });
+                  }}
+                  error={error.site_state_id ? true : false}
+                />
+                {error.task_state_id ? (
+                  <Text style={Style.textError}>{error?.site_state_id}</Text>
+                ) : null}
+              </View>
+
+              <View style={Style.formControl}>
+                <Text style={Style.label}>City</Text>
+                <DropDown
+                  mode="outlined"
+                  placeholder="Select City"
+                  style={Style.input}
+                  data={city}
+                  exLabel="name"
+                  exValue="id"
+                  value={query?.site_city_id}
+                  onChange={(text) => {
+                    setQuery({ ...query, site_city_id: text });
+                    const form_data = new FormData();
+                    form_data.append("state_id", text);
+                    postRequest("city-all-active", form_data).then((res) => {
+                      if (res.s) {
+                        setCity(res.data);
+                      }
+                    });
+                  }}
+                  error={error.site_city_id ? true : false}
+                />
+                {error.site_city_id ? (
+                  <Text style={Style.textError}>{error?.site_city_id}</Text>
+                ) : null}
+              </View>
+
+              <View style={Style.formControl}>
+                <Text style={Style.label}>Location</Text>
+                <DropDown
+                  mode="outlined"
+                  placeholder="Select City"
+                  style={Style.input}
+                  data={city}
+                  exLabel="name"
+                  exValue="id"
+                  value={query?.site_city_id}
+                  onChange={(text) => {
+                    setQuery({ ...query, site_city_id: text });
+                  }}
+                  error={error.site_city_id ? true : false}
+                />
+                {error.site_city_id ? (
+                  <Text style={Style.textError}>{error?.site_city_id}</Text>
+                ) : null}
+              </View>
+
+              <Button
+                mode="contained"
+                style={Style.button}
+                uppercase={false}
+                labelStyle={Style.buttonLabel}
+                onPress={() => {
+                  var validation = {};
+                  var proceed = true;
+                  const form_data = new FormData();
+                  form_data.append("id", 1);
+                  for (let i in status) {
+                    if (!status[i]) {
+                      validation[i] = "This field is required";
+                      proceed = false;
+                    }
+                    form_data.append(i, status[i]);
+                  }
+                  setError({ ...validation });
+                  if (proceed) {
+                    postRequest("campaign-update", form_data).then((res) => {
+                      if (res.s) {
+                        setStatus(null);
+                        // setError({ msg: res.msg });
+                        //return setTimeout(() => props.navigation.goBack(), 500);
+                      }
+                      if (res.error) {
+                        return setError(res.error);
+                      }
+                      setError({ msg: res.msg });
+                    });
+                  }
+                }}
+              >
+                Show Details
               </Button>
             </View>
           </ScrollView>

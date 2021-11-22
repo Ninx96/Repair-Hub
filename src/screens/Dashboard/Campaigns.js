@@ -20,7 +20,7 @@ import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
-const Dashboard = (props) => {
+const Campaigns = (props) => {
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -86,7 +86,7 @@ const Dashboard = (props) => {
                 }}
               >
                 <View>
-                  <Text style={{ fontSize: 30, color: "#FFF" }}>
+                  {/* <Text style={{ fontSize: 30, color: "#FFF" }}>
                     {moment(item?.created_at).format("DD MMM")}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
@@ -94,7 +94,7 @@ const Dashboard = (props) => {
                   </Text>
                   <Text style={{ fontSize: 20, color: "#FFF" }}>
                     {item.current_status_id == 1 ? "Pending" : "Verified"}
-                  </Text>
+                  </Text> */}
                 </View>
               </TouchableRipple>
               <TouchableRipple
@@ -109,16 +109,18 @@ const Dashboard = (props) => {
                 }
               >
                 <View>
-                  <Text style={{ fontSize: 28 }} numberOfLines={2}>
+                  <Text style={{ fontSize: 35 }} numberOfLines={2}>
                     {item?.title || "N/A"}
                   </Text>
                   {/* <Text style={{ fontSize: 20, color: "#888" }}>
                     {item?.client?.company_name || "N/A"}
                   </Text> */}
-                  <Text style={{ fontSize: 20 }}>
-                    {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
-                    {moment(item?.end_date).format("DD/MM/YYYY")}
-                  </Text>
+                  {userType == "client" && (
+                    <Text style={{ fontSize: 20 }}>
+                      {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
+                      {moment(item?.end_date).format("DD/MM/YYYY")}
+                    </Text>
+                  )}
                 </View>
               </TouchableRipple>
             </View>
@@ -252,4 +254,4 @@ const Dashboard = (props) => {
   );
 };
 
-export default Dashboard;
+export default Campaigns;
