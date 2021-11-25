@@ -7,6 +7,7 @@ import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const FilterSites = (props) => {
+  const routeParams = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [state, setState] = useState([]);
@@ -30,7 +31,9 @@ const FilterSites = (props) => {
   return (
     <SafeAreaView style={Style.container}>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
-        <Text style={[Style.heading, { marginBottom: 20 }]}>Campaign</Text>
+        <Text style={[Style.heading, { marginBottom: 20 }]}>
+          Campaign-Sites
+        </Text>
         <View style={Style.form}>
           <View style={Style.formControl}>
             <Text style={Style.label}>State</Text>
@@ -132,7 +135,10 @@ const FilterSites = (props) => {
               }
               setError({ ...validation });
               if (proceed) {
-                props.navigation.navigate("Sites", params);
+                props.navigation.navigate("Sites", {
+                  ...routeParams,
+                  params: params,
+                });
               }
             }}
           >

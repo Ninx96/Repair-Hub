@@ -21,6 +21,7 @@ import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Campaigns = (props) => {
+  const params = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -31,10 +32,9 @@ const Campaigns = (props) => {
 
   useEffect(() => {
     const form_data = new FormData();
-    if (userType == "client") {
-      form_data.append("client_id", user.id);
-    } else {
-      form_data.append("vendor_id", user.id);
+    form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
+    for (let i in params) {
+      form_data.append(i, params[i]);
     }
     postRequest("campaign-list", form_data).then((res) => {
       if (res.s) {
@@ -100,11 +100,13 @@ const Campaigns = (props) => {
               <TouchableRipple
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
                 onPress={() =>
-                  props.navigation.navigate("Sites", {
+                  props.navigation.navigate("FilterSites", {
                     campaign_id: item.id,
                     status_id: item?.current_status_id,
                     start_date: item?.start_date,
                     end_date: item?.end_date,
+                    campaign_name: item?.title,
+                    agency: item?.vendor?.name,
                   })
                 }
               >

@@ -45,8 +45,6 @@ const TaskDetails = (props) => {
     remarks: "",
   });
 
-  console.log(siteDetails);
-
   //components
 
   const [images, setImages] = useState([]);

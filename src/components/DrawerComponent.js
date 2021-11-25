@@ -23,7 +23,20 @@ const DrawerComponent = (props) => {
       screenOptions={{ unmountOnBlur: true, title: "" }}
     >
       <Drawer.Screen name="FilterCampaigns" component={FilterCampaigns} />
-      <Drawer.Screen name="FilterSites" component={FilterSites} />
+
+      <Drawer.Screen
+        name="FilterSites"
+        component={FilterSites}
+        options={{
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-left"
+              size={35}
+              onPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+      />
 
       <Drawer.Screen
         name="Campaigns"
