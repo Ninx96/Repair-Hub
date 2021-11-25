@@ -44,6 +44,7 @@ const Campaigns = (props) => {
       setError({ msg: "Could not connect to the server" });
     });
   }, [status]);
+
   return (
     <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList

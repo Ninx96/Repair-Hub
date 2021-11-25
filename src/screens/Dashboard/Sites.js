@@ -16,6 +16,7 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import Swiper from "react-native-swiper";
+import _ from "lodash";
 
 import { AuthContext } from "../../components/ContextComponent";
 import DatePicker from "../../components/DatePicker";
@@ -41,7 +42,7 @@ const Sites = (props) => {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
-
+  console.log(user);
   useEffect(() => {
     const form_data = new FormData();
     form_data.append("campaign_id", campaign_id);
@@ -59,6 +60,32 @@ const Sites = (props) => {
   }, [status]);
 
   const RenderComponent = ({ item }) => {
+    const grpImages = _.chunk(item.site_images.split(","), 3);
+    const slides = grpImages.map((grp, idx) => (
+      <View
+        key={idx}
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        {grp.map((img, id) => (
+          <ImageView
+            key={id}
+            source={{ uri: taskImages + img }}
+            style={{
+              height: 100,
+              width: 90,
+              marginHorizontal: 5,
+              marginVertical: 10,
+              borderRadius: 5,
+            }}
+          />
+        ))}
+      </View>
+    ));
+
     if (userType == "client") {
       return (
         <View style={{ marginVertical: 20 }}>
@@ -75,7 +102,19 @@ const Sites = (props) => {
             Media Type : {item?.medium_type?.name}
           </Text>
 
-          {item.site_images != "" && (
+          <View style={{ height: 120 }}>
+            <Swiper
+              style={{ flex: 1 }}
+              loadMinimal={true}
+              autoplay={false}
+              showsPagination={false}
+              showsButtons={true}
+            >
+              {slides}
+            </Swiper>
+          </View>
+
+          {/* {item.site_images != "" && (
             <FlatList
               data={item.site_images.split(",")}
               renderItem={({ item }) => (
@@ -92,7 +131,7 @@ const Sites = (props) => {
               horizontal
               style={{ height: 120 }}
             />
-          )}
+          )} */}
         </View>
       );
     }
@@ -197,7 +236,9 @@ const Sites = (props) => {
                   Duration : {moment(start_date).format("DD MMM YYYY")} -{" "}
                   {moment(end_date).format("DD MMM YYYY")}
                 </Text>
-                <Text style={{ fontSize: 24 }}>Agency : {agency || "N/A"}</Text>
+                <Text style={{ fontSize: 24 }}>
+                  Agency : {user.company_name || "N/A"}
+                </Text>
 
                 <Text style={{ fontSize: 26, color: "#282f80", marginTop: 20 }}>
                   INSTALLED SITE PHOTOGRAPHS
