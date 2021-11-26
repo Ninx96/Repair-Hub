@@ -29,10 +29,11 @@ const Sites = (props) => {
   const {
     campaign_id,
     campaign_name,
-    agency,
     status_id,
     start_date,
     end_date,
+    city,
+    state,
     params,
   } = props.route.params;
   const { getSession } = useContext(AuthContext);
@@ -236,6 +237,10 @@ const Sites = (props) => {
                   Duration : {moment(start_date).format("DD MMM YYYY")} -{" "}
                   {moment(end_date).format("DD MMM YYYY")}
                 </Text>
+                <Text style={{ fontSize: 24 }}>State : {state || "N/A"}</Text>
+
+                <Text style={{ fontSize: 24 }}>City : {city || "N/A"}</Text>
+
                 <Text style={{ fontSize: 24 }}>
                   Agency : {user.company_name || "N/A"}
                 </Text>

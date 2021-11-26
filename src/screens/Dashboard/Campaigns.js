@@ -45,6 +45,8 @@ const Campaigns = (props) => {
     });
   }, [status]);
 
+  console.log(list);
+
   return (
     <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList
@@ -107,7 +109,8 @@ const Campaigns = (props) => {
                     start_date: item?.start_date,
                     end_date: item?.end_date,
                     campaign_name: item?.title,
-                    agency: item?.vendor?.name,
+                    city: item?.city?.name,
+                    state: item?.state?.state,
                   })
                 }
               >
