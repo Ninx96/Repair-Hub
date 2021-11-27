@@ -89,6 +89,12 @@ const Campaigns = (props) => {
                 }}
               >
                 <View>
+                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                    State: {item?.state?.state}
+                  </Text>
+                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                    City: {item?.city?.name}
+                  </Text>
                   {/* <Text style={{ fontSize: 30, color: "#FFF" }}>
                     {moment(item?.created_at).format("DD MMM")}
                   </Text>

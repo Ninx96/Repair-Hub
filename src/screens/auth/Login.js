@@ -51,8 +51,10 @@ const Login = (props) => {
               style={Style.input}
               onChangeText={(text) => setParams({ ...params, email: text })}
             />
-            {error.email ? (
-              <Text style={Style.textError}>{error?.email}</Text>
+            {error.email || error.user_name ? (
+              <Text style={Style.textError}>
+                {error?.email || error.user_name}
+              </Text>
             ) : null}
           </View>
 
