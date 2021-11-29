@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { SafeAreaView, ScrollView, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
@@ -74,9 +74,10 @@ const FilterCampaigns = (props) => {
                 const form_data = new FormData();
                 form_data.append(
                   userType == "client" ? "client_id" : "vendor_id",
-                  text
+                  user.id
                 );
                 form_data.append("city_id", text);
+                console.log(form_data);
                 postRequest("campaign-locations", form_data).then((res) => {
                   if (res.s) {
                     console.log(res);
@@ -118,18 +119,17 @@ const FilterCampaigns = (props) => {
             labelStyle={Style.buttonLabel}
             onPress={() => {
               var validation = {};
-              var proceed = true;
               const form_data = new FormData();
               form_data.append("id", 1);
               for (let i in params) {
                 if (!params[i]) {
                   validation[i] = "This field is required";
-                  //   proceed = false;
                 }
                 form_data.append(i, params[i]);
               }
+              delete validation["area_name"];
               setError({ ...validation });
-              if (proceed) {
+              if (!Object.keys(validation).length) {
                 props.navigation.navigate("Campaigns", params);
               }
             }}

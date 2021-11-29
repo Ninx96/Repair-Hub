@@ -61,7 +61,10 @@ const Sites = (props) => {
   }, [status]);
 
   const RenderComponent = ({ item }) => {
-    const grpImages = _.chunk(item.site_images.split(","), 3);
+    const grpImages = _.chunk(
+      item.site_images ? item.site_images.split(",") : [],
+      3
+    );
     const slides = grpImages.map((grp, idx) => (
       <View
         key={idx}
@@ -252,6 +255,7 @@ const Sites = (props) => {
             )}
           </View>
         }
+        ListEmptyComponent={<Text style={Style.label}>No Reslut Found</Text>}
         renderItem={RenderComponent}
         keyExtractor={(item, index) => index.toString()}
       />

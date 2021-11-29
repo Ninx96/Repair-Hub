@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { SafeAreaView, ScrollView, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
@@ -15,15 +15,20 @@ const FilterSites = (props) => {
   const [location, setLocation] = useState([]);
   const [error, setError] = useState({});
   const [params, setParams] = useState({
-    state_id: "",
-    city_id: "",
+    state_id: routeParams.state_id,
+    city_id: routeParams.city_id,
     area_name: "",
   });
 
   useEffect(() => {
-    postRequest("state-all-active").then((res) => {
+    const form_data = new FormData();
+    // form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
+    form_data.append("campaign_id", routeParams.campaign_id);
+    form_data.append("city_id", routeParams.city_id);
+    postRequest("campaign-site-locations", form_data).then((res) => {
+      console.log(res);
       if (res.s) {
-        setState(res.data);
+        setLocation(res.data);
       }
     });
   }, []);
@@ -32,12 +37,15 @@ const FilterSites = (props) => {
     <SafeAreaView style={Style.container}>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <Text style={[Style.heading, { marginBottom: 20 }]}>
-          Campaign-Sites
+          {routeParams?.campaign_name}
         </Text>
         <View style={Style.form}>
           <View style={Style.formControl}>
             <Text style={Style.label}>State</Text>
-            <DropDown
+            <Text style={[Style.label, { color: "#fe5f5b" }]}>
+              {routeParams?.state}
+            </Text>
+            {/* <DropDown
               mode="outlined"
               placeholder="Select State"
               style={Style.input}
@@ -56,7 +64,7 @@ const FilterSites = (props) => {
                 });
               }}
               error={error.state_id ? true : false}
-            />
+            /> */}
             {error.state_id ? (
               <Text style={Style.textError}>{error?.state_id}</Text>
             ) : null}
@@ -64,7 +72,10 @@ const FilterSites = (props) => {
 
           <View style={Style.formControl}>
             <Text style={Style.label}>City</Text>
-            <DropDown
+            <Text style={[Style.label, { color: "#fe5f5b" }]}>
+              {routeParams?.city}
+            </Text>
+            {/* <DropDown
               mode="outlined"
               placeholder="Select City"
               style={Style.input}
@@ -77,7 +88,7 @@ const FilterSites = (props) => {
                 const form_data = new FormData();
                 form_data.append(
                   userType == "client" ? "client_id" : "vendor_id",
-                  text
+                  user.id
                 );
                 form_data.append("city_id", text);
                 postRequest("campaign-site-locations", form_data).then(
@@ -90,7 +101,7 @@ const FilterSites = (props) => {
                 );
               }}
               error={error.city_id ? true : false}
-            />
+            /> */}
             {error.city_id ? (
               <Text style={Style.textError}>{error?.city_id}</Text>
             ) : null}
@@ -103,8 +114,8 @@ const FilterSites = (props) => {
               placeholder="Select Location"
               style={Style.input}
               data={location}
-              exLabel="task_area_name"
-              exValue="task_area_name"
+              exLabel="site_area_name"
+              exValue="site_area_name"
               value={params?.area_name}
               onChange={(text) => {
                 setParams({ ...params, area_name: text });
@@ -129,7 +140,7 @@ const FilterSites = (props) => {
               for (let i in params) {
                 if (!params[i]) {
                   validation[i] = "This field is required";
-                  //   proceed = false;
+                  proceed = false;
                 }
                 form_data.append(i, params[i]);
               }

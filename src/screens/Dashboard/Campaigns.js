@@ -53,6 +53,7 @@ const Campaigns = (props) => {
         style={{ width: "90%" }}
         data={list}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<Text style={Style.label}>No Reslut Found</Text>}
         ListHeaderComponent={<Text style={Style.heading}>My Campaigns</Text>}
         renderItem={({ item, index }) => (
           <Card
@@ -95,15 +96,9 @@ const Campaigns = (props) => {
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
                     City: {item?.city?.name}
                   </Text>
-                  {/* <Text style={{ fontSize: 30, color: "#FFF" }}>
-                    {moment(item?.created_at).format("DD MMM")}
-                  </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
-                    {moment(item?.created_at).format("LT")}
+                    Area: {item?.task_area_name}
                   </Text>
-                  <Text style={{ fontSize: 20, color: "#FFF" }}>
-                    {item.current_status_id == 1 ? "Pending" : "Verified"}
-                  </Text> */}
                 </View>
               </TouchableRipple>
               <TouchableRipple
@@ -115,7 +110,9 @@ const Campaigns = (props) => {
                     start_date: item?.start_date,
                     end_date: item?.end_date,
                     campaign_name: item?.title,
+                    city_id: item?.city?.id,
                     city: item?.city?.name,
+                    state_id: item?.state?.id,
                     state: item?.state?.state,
                   })
                 }
