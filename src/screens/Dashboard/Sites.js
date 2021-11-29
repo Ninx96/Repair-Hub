@@ -212,7 +212,7 @@ const Sites = (props) => {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <Text style={Style.heading}>My Sites</Text>
-              {userType != "client" && (
+              {/* {userType != "client" && (
                 <Button
                   mode="text"
                   labelStyle={{ fontSize: 25 }}
@@ -226,7 +226,7 @@ const Sites = (props) => {
                 >
                   Edit End Date
                 </Button>
-              )}
+              )} */}
             </View>
             {userType == "client" && (
               <View>

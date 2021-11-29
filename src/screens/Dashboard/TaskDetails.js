@@ -57,13 +57,13 @@ const TaskDetails = (props) => {
   const [mediumtype, setMediumtype] = useState([]);
 
   useEffect(() => {
-    if (siteDetails?.site_images) {
-      const imgs = siteDetails.site_images.split(",");
-      imgs.forEach((img) => {
-        images.push({ name: img, type: "image/jpg", uri: taskImages + img });
-      });
-      setImages([...images]);
-    }
+    // if (siteDetails?.site_images) {
+    //   const imgs = siteDetails.site_images.split(",");
+    //   imgs.forEach((img) => {
+    //     images.push({ name: img, type: "image/jpg", uri: taskImages + img });
+    //   });
+    //   setImages([...images]);
+    // }
 
     if (userType != "client") {
       (async () => {
