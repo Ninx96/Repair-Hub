@@ -43,9 +43,10 @@ const Sites = (props) => {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
-  console.log(user);
+
   useEffect(() => {
     const form_data = new FormData();
+    fd.append(userType == "client" ? "client_id" : "vendor_id", user.id);
     form_data.append("campaign_id", campaign_id);
     for (let i in params) {
       form_data.append(i, params[i]);
@@ -255,11 +256,11 @@ const Sites = (props) => {
             )}
           </View>
         }
-        ListEmptyComponent={<Text style={Style.label}>No Reslut Found</Text>}
+        ListEmptyComponent={<Text style={Style.label}>No Result Found</Text>}
         renderItem={RenderComponent}
         keyExtractor={(item, index) => index.toString()}
       />
-      {userType != "client" && status_id == 2 && (
+      {userType != "client" && status_id == 2 && list.length == 0 && (
         <FAB
           icon="plus"
           style={{ position: "absolute", right: 20, bottom: 20 }}

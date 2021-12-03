@@ -20,7 +20,9 @@ const FilterCampaigns = (props) => {
   });
 
   useEffect(() => {
-    postRequest("state-all-active").then((res) => {
+    const fd = new FormData();
+    fd.append(userType == "client" ? "client_id" : "vendor_id", user.id);
+    postRequest("camp-state-all-active", fd).then((res) => {
       if (res.s) {
         setState(res.data);
       }

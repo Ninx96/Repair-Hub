@@ -53,7 +53,7 @@ const Campaigns = (props) => {
         style={{ width: "90%" }}
         data={list}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text style={Style.label}>No Reslut Found</Text>}
+        ListEmptyComponent={<Text style={Style.label}>No Result Found</Text>}
         ListHeaderComponent={<Text style={Style.heading}>My Campaigns</Text>}
         renderItem={({ item, index }) => (
           <Card
