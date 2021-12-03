@@ -48,7 +48,11 @@ const FilterCampaigns = (props) => {
                 setParams({ ...params, state_id: text });
                 const form_data = new FormData();
                 form_data.append("state_id", text);
-                postRequest("city-all-active", form_data).then((res) => {
+                form_data.append(
+                  userType == "client" ? "client_id" : "vendor_id",
+                  user.id
+                );
+                postRequest("camp-city-all-active", form_data).then((res) => {
                   if (res.s) {
                     setCity(res.data);
                   }

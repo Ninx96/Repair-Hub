@@ -46,7 +46,7 @@ const Sites = (props) => {
 
   useEffect(() => {
     const form_data = new FormData();
-    fd.append(userType == "client" ? "client_id" : "vendor_id", user.id);
+    form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
     form_data.append("campaign_id", campaign_id);
     for (let i in params) {
       form_data.append(i, params[i]);
@@ -95,7 +95,7 @@ const Sites = (props) => {
       return (
         <View style={{ marginVertical: 20 }}>
           <Text style={{ fontSize: 26, color: "#fe5f5b" }}>
-            Location : {item.site_address}
+            Location : {item?.site_area_name}
           </Text>
           <Text style={{ fontSize: 26, color: "#fe5f5b" }}>
             Size : {item.size_w} x {item.size_h}
