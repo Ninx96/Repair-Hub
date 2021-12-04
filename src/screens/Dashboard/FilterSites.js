@@ -26,7 +26,6 @@ const FilterSites = (props) => {
     form_data.append("campaign_id", routeParams.campaign_id);
     form_data.append("city_id", routeParams.city_id);
     postRequest("campaign-site-locations", form_data).then((res) => {
-      console.log(res);
       if (res.s) {
         setLocation(res.data);
       }

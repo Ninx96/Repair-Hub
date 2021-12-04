@@ -263,7 +263,6 @@ const Profile = () => {
                     : "vendor-edit-profile",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     updateUser({

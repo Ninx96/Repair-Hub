@@ -83,10 +83,8 @@ const FilterCampaigns = (props) => {
                   user.id
                 );
                 form_data.append("city_id", text);
-                console.log(form_data);
                 postRequest("campaign-locations", form_data).then((res) => {
                   if (res.s) {
-                    console.log(res);
                     setLocation(res.data);
                   }
                 });

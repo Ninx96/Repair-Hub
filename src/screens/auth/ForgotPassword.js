@@ -84,7 +84,6 @@ const ForgotPassword = (props) => {
                     : "vendor-forgot-password",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     return props.navigation.navigate("Otp", {

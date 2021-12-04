@@ -118,7 +118,6 @@ const Login = (props) => {
                   type == "client" ? "client-login" : "vendor-login",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     return signIn({

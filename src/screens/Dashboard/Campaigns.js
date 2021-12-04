@@ -45,8 +45,6 @@ const Campaigns = (props) => {
     });
   }, [status]);
 
-  console.log(list);
-
   return (
     <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList

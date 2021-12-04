@@ -165,7 +165,6 @@ const Register = (props) => {
                 ).then((res) => {
                   setLoading(false);
                   if (res.s) {
-                    console.log(res);
                     // return props.navigation.navigate("Otp", {
                     //   user: res.data,
                     //   type: type,
