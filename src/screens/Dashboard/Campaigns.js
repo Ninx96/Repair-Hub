@@ -27,22 +27,31 @@ const Campaigns = (props) => {
   const [list, setList] = useState([]);
   const [error, setError] = useState({});
   const [status, setStatus] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    const form_data = new FormData();
-    form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
-    for (let i in params) {
-      form_data.append(i, params[i]);
-    }
-    postRequest("campaign-list", form_data).then((res) => {
+    const getAsync = async () => {
+      const form_data = new FormData();
+      form_data.append(
+        userType == "client" ? "client_id" : "vendor_id",
+        user.id
+      );
+      for (let i in params) {
+        form_data.append(i, params[i]);
+      }
+      const res = await postRequest("campaign-list", form_data);
+
       if (res.s) {
         setList(res.data.data);
         return;
       }
       setError({ msg: "Could not connect to the server" });
-    });
+
+      setLoading(false);
+    };
+
+    getAsync();
   }, [status]);
 
   return (
@@ -51,7 +60,11 @@ const Campaigns = (props) => {
         style={{ width: "90%" }}
         data={list}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text style={Style.label}>No Result Found</Text>}
+        ListEmptyComponent={
+          <Text style={Style.label}>
+            {loading ? "Loading..." : "No Result Found"}
+          </Text>
+        }
         ListHeaderComponent={<Text style={Style.heading}>My Campaigns</Text>}
         renderItem={({ item, index }) => (
           <Card
@@ -95,7 +108,7 @@ const Campaigns = (props) => {
                     City: {item?.city?.name}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
-                    Area: {item?.task_area_name}
+                    Location: {item?.task_area_name}
                   </Text>
                 </View>
               </TouchableRipple>

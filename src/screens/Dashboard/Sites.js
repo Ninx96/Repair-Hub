@@ -41,24 +41,31 @@ const Sites = (props) => {
   const [list, setList] = useState([]);
   const [error, setError] = useState({});
   const [status, setStatus] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    const form_data = new FormData();
-    form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
-    form_data.append("campaign_id", campaign_id);
-    for (let i in params) {
-      form_data.append(i, params[i]);
-    }
-    postRequest("campaign-site-list", form_data).then((res) => {
+    const getAsync = async () => {
+      const form_data = new FormData();
+      form_data.append(
+        userType == "client" ? "client_id" : "vendor_id",
+        user.id
+      );
+      form_data.append("campaign_id", campaign_id);
+      for (let i in params) {
+        form_data.append(i, params[i]);
+      }
+      const res = await postRequest("campaign-site-list", form_data);
+
       if (res.s) {
         setList(res.data.data);
         return;
       }
       setError({ msg: "Could not connect to the server" });
-      s;
-    });
+      setLoading(false);
+    };
+
+    getAsync();
   }, [status]);
 
   const RenderComponent = ({ item }) => {
@@ -256,22 +263,15 @@ const Sites = (props) => {
             )}
           </View>
         }
-        ListEmptyComponent={<Text style={Style.label}>No Result Found</Text>}
+        ListEmptyComponent={
+          <Text style={Style.label}>
+            {loading ? "Loading..." : "No Result Found"}
+          </Text>
+        }
         renderItem={RenderComponent}
         keyExtractor={(item, index) => index.toString()}
       />
-      {userType != "client" && status_id == 2 && list.length == 0 && (
-        <FAB
-          icon="plus"
-          style={{ position: "absolute", right: 20, bottom: 20 }}
-          onPress={() =>
-            props.navigation.navigate("TaskDetails", {
-              siteDetails: null,
-              campaign_id: campaign_id,
-            })
-          }
-        />
-      )}
+
       <Portal>
         <Modal
           visible={status}

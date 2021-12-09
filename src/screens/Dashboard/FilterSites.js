@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, FAB, Text } from "react-native-paper";
 import { AuthContext } from "../../components/ContextComponent";
 import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
@@ -156,6 +156,20 @@ const FilterSites = (props) => {
           </Button>
         </View>
       </ScrollView>
+      {userType != "client" &&
+        routeParams.status_id == 2 &&
+        location.length == 0 && (
+          <FAB
+            icon="plus"
+            style={{ position: "absolute", right: 20, bottom: 20 }}
+            onPress={() =>
+              props.navigation.navigate("TaskDetails", {
+                siteDetails: null,
+                campaign_id: routeParams.campaign_id,
+              })
+            }
+          />
+        )}
     </SafeAreaView>
   );
 };
