@@ -27,10 +27,10 @@ const DrawerLayout = (props) => {
 
       <DrawerContentScrollView>
         <List.Item
-          title="Home"
+          title="Campaigns"
           titleStyle={{ fontSize: 26 }}
           left={(props) => <List.Icon {...props} icon="home" color="#282f80" />}
-          onPress={() => props.navigation.navigate("Home")}
+          onPress={() => props.navigation.navigate("FilterCampaigns")}
         />
         <List.Item
           title="My Profile"

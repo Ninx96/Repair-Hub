@@ -20,7 +20,8 @@ import DropDown from "../../components/DropDownComponent";
 import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
-const Dashboard = (props) => {
+const Campaigns = (props) => {
+  const params = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -31,10 +32,9 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     const form_data = new FormData();
-    if (userType == "client") {
-      form_data.append("client_id", user.id);
-    } else {
-      form_data.append("vendor_id", user.id);
+    form_data.append(userType == "client" ? "client_id" : "vendor_id", user.id);
+    for (let i in params) {
+      form_data.append(i, params[i]);
     }
     postRequest("campaign-list", form_data).then((res) => {
       if (res.s) {
@@ -44,12 +44,14 @@ const Dashboard = (props) => {
       setError({ msg: "Could not connect to the server" });
     });
   }, [status]);
+
   return (
     <SafeAreaView style={[Style.container, { alignItems: "center" }]}>
       <FlatList
         style={{ width: "90%" }}
         data={list}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<Text style={Style.label}>No Result Found</Text>}
         ListHeaderComponent={<Text style={Style.heading}>My Campaigns</Text>}
         renderItem={({ item, index }) => (
           <Card
@@ -86,39 +88,46 @@ const Dashboard = (props) => {
                 }}
               >
                 <View>
-                  <Text style={{ fontSize: 30, color: "#FFF" }}>
-                    {moment(item?.created_at).format("DD MMM")}
+                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                    State: {item?.state?.state}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
-                    {moment(item?.created_at).format("LT")}
+                    City: {item?.city?.name}
                   </Text>
-                  <Text style={{ fontSize: 20, color: "#FFF" }}>
-                    {item.current_status_id == 1 ? "Pending" : "Verified"}
+                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                    Area: {item?.task_area_name}
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
                 style={{ flex: 1, paddingLeft: 10, justifyContent: "center" }}
                 onPress={() =>
-                  props.navigation.navigate("Sites", {
+                  props.navigation.navigate("FilterSites", {
                     campaign_id: item.id,
                     status_id: item?.current_status_id,
                     start_date: item?.start_date,
                     end_date: item?.end_date,
+                    campaign_name: item?.title,
+                    city_id: item?.city?.id,
+                    city: item?.city?.name,
+                    state_id: item?.state?.id,
+                    state: item?.state?.state,
                   })
                 }
               >
                 <View>
-                  <Text style={{ fontSize: 28 }} numberOfLines={2}>
+                  <Text style={{ fontSize: 35 }} numberOfLines={2}>
                     {item?.title || "N/A"}
                   </Text>
                   {/* <Text style={{ fontSize: 20, color: "#888" }}>
                     {item?.client?.company_name || "N/A"}
                   </Text> */}
-                  <Text style={{ fontSize: 20 }}>
-                    {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
-                    {moment(item?.end_date).format("DD/MM/YYYY")}
-                  </Text>
+                  {userType == "client" && (
+                    <Text style={{ fontSize: 20 }}>
+                      {moment(item?.start_date).format("DD/MM/YYYY")} -{" "}
+                      {moment(item?.end_date).format("DD/MM/YYYY")}
+                    </Text>
+                  )}
                 </View>
               </TouchableRipple>
             </View>
@@ -252,4 +261,4 @@ const Dashboard = (props) => {
   );
 };
 
-export default Dashboard;
+export default Campaigns;

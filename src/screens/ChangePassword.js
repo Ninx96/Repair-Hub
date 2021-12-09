@@ -97,15 +97,12 @@ const ChangePassword = () => {
               }
               setError({ ...validation });
               if (proceed) {
-                console.log(form_data);
-                console.log("asd");
                 postRequest(
                   userType == "client"
                     ? "client-change-password"
                     : "vendor-change-password",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   if (res.s) {
                     setParams({
                       old_password: "",

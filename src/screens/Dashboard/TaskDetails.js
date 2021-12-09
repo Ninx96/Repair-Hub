@@ -45,10 +45,8 @@ const TaskDetails = (props) => {
     remarks: "",
   });
 
-  console.log(siteDetails);
-
   //components
-
+  const [oldImages, setOldImages] = useState([]);
   const [images, setImages] = useState([]);
 
   // utility
@@ -62,9 +60,9 @@ const TaskDetails = (props) => {
     if (siteDetails?.site_images) {
       const imgs = siteDetails.site_images.split(",");
       imgs.forEach((img) => {
-        images.push({ name: img, type: "image/jpg", uri: taskImages + img });
+        oldImages.push({ name: img, type: "image/jpg", uri: taskImages + img });
       });
-      setImages([...images]);
+      setOldImages([...oldImages]);
     }
 
     if (userType != "client") {
@@ -424,7 +422,8 @@ const TaskDetails = (props) => {
 
                 form_data.append("latitude", location?.coords?.latitude);
                 form_data.append("longitude", location?.coords?.longitude);
-                images.forEach((img, idx) => {
+                const allImages = oldImages.concat(images);
+                allImages.forEach((img, idx) => {
                   form_data.append(`file[${idx}]`, img);
                 });
 
@@ -443,8 +442,6 @@ const TaskDetails = (props) => {
                       : "campaign-site-create",
                     form_data
                   ).then((res) => {
-                    console.log(form_data);
-                    console.log(res);
                     setLoading(false);
                     if (res.s) {
                       setError({

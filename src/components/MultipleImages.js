@@ -3,6 +3,7 @@ import { Image, View, FlatList } from "react-native";
 import { ImageBrowser } from "expo-image-picker-multiple";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 import {
   Button,
@@ -229,13 +230,16 @@ const MultipleImages = ({ onSelect, onClear, data = [], disabled }) => {
             style={{ alignSelf: "flex-end" }}
             onPress={() => setmodalImage(false)}
           />
-          <Image
+          {/* <Image
             source={modalImage}
             style={{
               width: "100%",
               height: "80%",
               resizeMode: "contain",
             }}
+          /> */}
+          <ImageViewer
+            imageUrls={[{ url: modalImage.uri, props: { source: modalImage } }]}
           />
         </Modal>
       </Portal>

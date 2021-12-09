@@ -113,7 +113,6 @@ const Otp = (props) => {
                   form_data
                 ).then((res) => {
                   setLoading(false);
-                  console.log(res);
                   if (res.s) {
                     if (isForget) {
                       return props.navigation.navigate("ResetPassword", {

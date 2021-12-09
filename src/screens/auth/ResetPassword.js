@@ -114,7 +114,6 @@ const ResetPassword = (props) => {
                     : "vendor-reset-password",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     return props.navigation.navigate("Login", { type });

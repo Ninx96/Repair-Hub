@@ -42,17 +42,19 @@ const Login = (props) => {
 
         <View style={Style.form}>
           <View style={Style.formControl}>
-            <Text style={Style.label}>Enter Email</Text>
+            <Text style={Style.label}>Enter Username</Text>
             <TextInput
               disabled={loading}
               error={error.email ? true : false}
               mode="outlined"
-              placeholder="Enter Email"
+              placeholder="Enter Username"
               style={Style.input}
               onChangeText={(text) => setParams({ ...params, email: text })}
             />
-            {error.email ? (
-              <Text style={Style.textError}>{error?.email}</Text>
+            {error.email || error.user_name ? (
+              <Text style={Style.textError}>
+                {error?.email || error.user_name}
+              </Text>
             ) : null}
           </View>
 
@@ -116,7 +118,6 @@ const Login = (props) => {
                   type == "client" ? "client-login" : "vendor-login",
                   form_data
                 ).then((res) => {
-                  console.log(res);
                   setLoading(false);
                   if (res.s) {
                     return signIn({
