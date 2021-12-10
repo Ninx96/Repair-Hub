@@ -35,7 +35,9 @@ const FilterSites = (props) => {
   return (
     <SafeAreaView style={Style.container}>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
-        <Text style={[Style.heading, { marginBottom: 20 }]}>
+        <Text
+          style={[Style.heading, { marginBottom: 20, textAlign: "center" }]}
+        >
           {routeParams?.campaign_name}
         </Text>
         <View style={Style.form}>
