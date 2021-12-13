@@ -3,6 +3,7 @@ import moment from "moment";
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View, FlatList, ScrollView, Image } from "react-native";
 import {
+  Badge,
   Button,
   Card,
   DataTable,
@@ -68,8 +69,6 @@ const Sites = (props) => {
     getAsync();
   }, [status]);
 
-  console.log(list);
-
   const RenderComponent = ({ item }) => {
     if (userType == "client") {
       return (
@@ -95,20 +94,41 @@ const Sites = (props) => {
             Total Sqft : {item?.total_area_in_sqft}
           </Text>
 
-          <View style={{ height: 120, flexDirection: "row", flexWrap: "wrap" }}>
-            {item.site_images.split(",").map((img, id) => (
-              <ImageView
-                key={id}
-                source={{ uri: taskImages + img }}
-                style={{
-                  height: 100,
-                  width: 90,
-                  marginHorizontal: 5,
-                  marginVertical: 10,
-                  borderRadius: 5,
-                }}
-              />
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            {item.site_images.split(",").map((item, idx) => (
+              <View style={{ margin: 5, marginHorizontal: 10 }}>
+                <ImageView
+                  key={idx}
+                  source={{ uri: taskImages + item }}
+                  style={{
+                    height: 100,
+                    width: 90,
+                  }}
+                />
+                <Badge style={{ alignSelf: "center" }}>{idx + 1}</Badge>
+              </View>
             ))}
+            {/* <FlatList
+              data={item.site_images.split(",")}
+              renderItem={({ item }) => (
+                <ImageView
+                  source={{ uri: taskImages + item }}
+                  style={{
+                    height: 100,
+                    width: 90,
+                    marginHorizontal: 5,
+                  }}
+                />
+              )}
+              keyExtractor={(_, idx) => idx + "img"}
+              horizontal
+              style={{ height: 120 }}
+            /> */}
           </View>
         </View>
       );
@@ -117,7 +137,6 @@ const Sites = (props) => {
     return (
       <Card
         style={{
-          height: 140,
           borderWidth: 0.5,
           borderColor: "#000",
           marginVertical: 10,
@@ -141,6 +160,7 @@ const Sites = (props) => {
               width: "30%",
               paddingLeft: 10,
               justifyContent: "center",
+              paddingVertical: 10,
             }}
           >
             <Text style={{ fontSize: 30, color: "#FFF" }}>

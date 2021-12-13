@@ -69,7 +69,6 @@ const Campaigns = (props) => {
         renderItem={({ item, index }) => (
           <Card
             style={{
-              height: 120,
               borderWidth: 0.5,
               borderColor: "#000",
               marginVertical: 10,
@@ -84,6 +83,7 @@ const Campaigns = (props) => {
                   width: "30%",
                   paddingLeft: 10,
                   justifyContent: "center",
+                  paddingVertical: 10,
                 }}
                 onPress={() => {
                   const form_data = new FormData();
@@ -101,10 +101,14 @@ const Campaigns = (props) => {
                 }}
               >
                 <View>
-                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                  <Text
+                    style={{ fontSize: 20, color: "#EEE", marginBottom: 5 }}
+                  >
                     State: {item?.state?.state}
                   </Text>
-                  <Text style={{ fontSize: 20, color: "#EEE" }}>
+                  <Text
+                    style={{ fontSize: 20, color: "#EEE", marginBottom: 5 }}
+                  >
                     City: {item?.city?.name}
                   </Text>
                   <Text style={{ fontSize: 20, color: "#EEE" }}>
