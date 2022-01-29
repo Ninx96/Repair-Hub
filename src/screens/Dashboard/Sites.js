@@ -3,6 +3,7 @@ import moment from "moment";
 import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View, FlatList, ScrollView, Image } from "react-native";
 import {
+  Badge,
   Button,
   Card,
   DataTable,
@@ -59,6 +60,7 @@ const Sites = (props) => {
 
       if (res.s) {
         setList(res.data.data);
+        setLoading(false);
         return;
       }
       setError({ msg: "Could not connect to the server" });
@@ -69,35 +71,6 @@ const Sites = (props) => {
   }, [status]);
 
   const RenderComponent = ({ item }) => {
-    const grpImages = _.chunk(
-      item.site_images ? item.site_images.split(",") : [],
-      3
-    );
-    const slides = grpImages.map((grp, idx) => (
-      <View
-        key={idx}
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        {grp.map((img, id) => (
-          <ImageView
-            key={id}
-            source={{ uri: taskImages + img }}
-            style={{
-              height: 100,
-              width: 90,
-              marginHorizontal: 5,
-              marginVertical: 10,
-              borderRadius: 5,
-            }}
-          />
-        ))}
-      </View>
-    ));
-
     if (userType == "client") {
       return (
         <View style={{ marginVertical: 20 }}>
@@ -113,21 +86,35 @@ const Sites = (props) => {
           <Text style={{ fontSize: 26, color: "#fe5f5b" }}>
             Media Type : {item?.medium_type?.name}
           </Text>
+          {item.free_size != "" && (
+            <Text style={{ fontSize: 26, color: "#fe5f5b" }}>
+              Free Size : {item?.free_size}
+            </Text>
+          )}
+          <Text style={{ fontSize: 26, color: "#fe5f5b" }}>
+            Total Sqft : {item?.total_area_in_sqft}
+          </Text>
 
-          <View style={{ height: 120 }}>
-            <Swiper
-              style={{ flex: 1 }}
-              loadMinimal={true}
-              autoplay={false}
-              showsPagination={false}
-              showsButtons={true}
-            >
-              {slides}
-            </Swiper>
-          </View>
-
-          {/* {item.site_images != "" && (
-            <FlatList
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            {item.site_images.split(",").map((item, idx) => (
+              <View style={{ margin: 5, marginHorizontal: 10 }}>
+                <ImageView
+                  key={idx}
+                  source={{ uri: taskImages + item }}
+                  style={{
+                    height: 100,
+                    width: 90,
+                  }}
+                />
+                <Badge style={{ alignSelf: "center" }}>{idx + 1}</Badge>
+              </View>
+            ))}
+            {/* <FlatList
               data={item.site_images.split(",")}
               renderItem={({ item }) => (
                 <ImageView
@@ -142,8 +129,8 @@ const Sites = (props) => {
               keyExtractor={(_, idx) => idx + "img"}
               horizontal
               style={{ height: 120 }}
-            />
-          )} */}
+            /> */}
+          </View>
         </View>
       );
     }
@@ -151,7 +138,6 @@ const Sites = (props) => {
     return (
       <Card
         style={{
-          height: 140,
           borderWidth: 0.5,
           borderColor: "#000",
           marginVertical: 10,
@@ -175,6 +161,7 @@ const Sites = (props) => {
               width: "30%",
               paddingLeft: 10,
               justifyContent: "center",
+              paddingVertical: 10,
             }}
           >
             <Text style={{ fontSize: 30, color: "#FFF" }}>

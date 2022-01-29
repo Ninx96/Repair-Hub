@@ -17,12 +17,12 @@ const DrawerComponent = (props) => {
   const Drawer = createDrawerNavigator();
   return (
     <Drawer.Navigator
-      initialRouteName="FilterCampaigns"
+      initialRouteName="Campaigns"
       backBehavior="history"
       drawerContent={(props) => <DrawerLayout {...props} />}
       screenOptions={{ unmountOnBlur: true, title: "" }}
     >
-      <Drawer.Screen name="FilterCampaigns" component={FilterCampaigns} />
+      {/* <Drawer.Screen name="FilterCampaigns" component={FilterCampaigns} /> */}
 
       <Drawer.Screen
         name="FilterSites"
