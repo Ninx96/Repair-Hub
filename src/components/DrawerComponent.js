@@ -38,19 +38,7 @@ const DrawerComponent = (props) => {
         }}
       />
 
-      <Drawer.Screen
-        name="Campaigns"
-        component={Campaigns}
-        options={{
-          headerLeft: () => (
-            <IconButton
-              icon="chevron-left"
-              size={35}
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        }}
-      />
+      <Drawer.Screen name="Campaigns" component={Campaigns} />
 
       <Drawer.Screen
         name="Sites"

@@ -30,7 +30,7 @@ const DrawerLayout = (props) => {
           title="Campaigns"
           titleStyle={{ fontSize: 26 }}
           left={(props) => <List.Icon {...props} icon="home" color="#282f80" />}
-          onPress={() => props.navigation.navigate("FilterCampaigns")}
+          onPress={() => props.navigation.navigate("Campaigns")}
         />
         <List.Item
           title="My Profile"
