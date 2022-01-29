@@ -21,7 +21,7 @@ import { postRequest } from "../../services/RequestServices";
 import Style from "../../styles/Style";
 
 const Campaigns = (props) => {
-  const params = props.route.params;
+  // const params = props.route.params;
   const { getSession } = useContext(AuthContext);
   const { userType, user } = getSession();
   const [list, setList] = useState([]);
@@ -37,9 +37,9 @@ const Campaigns = (props) => {
         userType == "client" ? "client_id" : "vendor_id",
         user.id
       );
-      for (let i in params) {
-        form_data.append(i, params[i]);
-      }
+      // for (let i in params) {
+      //   form_data.append(i, params[i]);
+      // }
       const res = await postRequest("campaign-list", form_data);
 
       if (res.s) {
@@ -133,7 +133,10 @@ const Campaigns = (props) => {
                 }
               >
                 <View>
-                  <Text style={{ fontSize: 35 }} numberOfLines={2}>
+                  <Text
+                    style={{ fontSize: 25, marginBottom: 10 }}
+                    numberOfLines={4}
+                  >
                     {item?.title || "N/A"}
                   </Text>
                   {/* <Text style={{ fontSize: 20, color: "#888" }}>

@@ -60,6 +60,7 @@ const Sites = (props) => {
 
       if (res.s) {
         setList(res.data.data);
+        setLoading(false);
         return;
       }
       setError({ msg: "Could not connect to the server" });
